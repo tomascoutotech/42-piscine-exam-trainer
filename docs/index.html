@@ -112,7 +112,8 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:18px 0;color:var
     <h2>Como funciona o exame</h2>
     <p>O exame sorteia <b>um exercicio de cada nivel</b>, a comecar no nivel 0. So passas ao
     nivel seguinte depois de validar o anterior &mdash; nao se salta. Cada exame vai ate a um
-    nivel diferente: o exam00 para no 1, o final vai ate ao 5.</p>
+    nivel diferente: o exam00 para no nivel 1, e o exam03 &mdash; que e o exame final da
+    Piscine &mdash; vai ate ao 5.</p>
     <p>A correccao nao corre a norminette. Corre tres coisas:</p>
     <pre>cc -Wall -Wextra -Werror   compila sem um unico aviso
 nm                         nenhuma funcao alem das permitidas
@@ -125,7 +126,7 @@ diff                       o output igual byte a byte</pre>
     a serio e o simulador de linha de comandos que esta no repositorio:</p>
     <pre>git clone https://github.com/tomascoutotech/42-piscine-exam-trainer
 cd 42-piscine-exam-trainer
-./exam start final</pre>
+./exam start exam03</pre>
     <p>Precisa de Linux, macOS ou WSL &mdash; o mesmo que vais ter no exame.</p>
 
     <h2>O documento</h2>
@@ -143,12 +144,12 @@ var POOL = window.POOL || [];
 var PORNOME = {};
 POOL.forEach(function (e) { PORNOME[e.nome] = e; });
 
+// a Piscine tem quatro exames, e o exam03 e o exame final
 var EXAMES = [
   { id: "exam00", max: 1, txt: "niveis 0 e 1" },
   { id: "exam01", max: 2, txt: "niveis 0 a 2" },
   { id: "exam02", max: 3, txt: "niveis 0 a 3" },
-  { id: "exam03", max: 4, txt: "niveis 0 a 4" },
-  { id: "final", max: 5, txt: "niveis 0 a 5" }
+  { id: "exam03", max: 5, txt: "niveis 0 a 5 &middot; o exame final" }
 ];
 var DURACAO = 4 * 3600 * 1000;
 
@@ -273,8 +274,9 @@ function desenhaExame() {
   if (tick) { clearInterval(tick); tick = null; }
 
   if (!sessao) {
-    var h = "<h2>Escolhe o exame</h2><p>Sorteia um exercicio por nivel, a comecar no 0, "
-          + "como no exame a serio. Quatro horas.</p><div class=\"grid\">";
+    var h = "<h2>Escolhe o exame</h2><p>A Piscine tem quatro exames, e o ultimo, o "
+          + "<b>exam03</b>, e o exame final. Sorteia um exercicio por nivel, a comecar "
+          + "no 0, como no exame a serio. Quatro horas.</p><div class=\"grid\">";
     EXAMES.forEach(function (e) {
       h += '<button class="card" data-e="' + e.id + '"><b>' + e.id + "</b><small>"
         + e.txt + "</small></button>";

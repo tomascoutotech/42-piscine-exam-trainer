@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Simulador dos exames da Piscine da 42.
 #   ./exam                ajuda
-#   ./exam start final    comeca um exame
+#   ./exam start exam03   comeca um exame (o exam03 e o exame final)
 #   ./exam grade          corrige o exercicio actual
 # A correccao faz o mesmo que a Moulinette faz: compila com -Wall -Wextra
 # -Werror, ve as funcoes proibidas com nm, e compara o output byte a byte.
@@ -20,15 +20,15 @@ else
 	V=''; R=''; A=''; C=''; B=''; X=''
 fi
 
-# exame -> nivel maximo. O exame final vai ate ao 5; os outros param mais cedo.
+# exame -> nivel maximo. Sao quatro, e o exam03 E o exame final da Piscine:
+# e o unico que vai ate ao nivel 5. "final" aceita-se como outro nome dele.
 niveis_de()
 {
 	case "$1" in
 		exam00) echo 1 ;;
 		exam01) echo 2 ;;
 		exam02) echo 3 ;;
-		exam03) echo 4 ;;
-		final)  echo 5 ;;
+		exam03) echo 5 ;;
 		*)      echo -1 ;;
 	esac
 }
@@ -235,10 +235,11 @@ tempo()
 
 cmd_start()
 {
-	exame="${1:-final}"
+	exame="${1:-exam03}"
+	[ "$exame" == "final" ] && exame=exam03
 	local max; max="$(niveis_de "$exame")"
 	if [ "$max" -lt 0 ]; then
-		echo "${R}exame desconhecido: $exame${X}  (exam00 exam01 exam02 exam03 final)"
+		echo "${R}exame desconhecido: $exame${X}  (exam00 exam01 exam02 exam03)"
 		exit 1
 	fi
 	if [ -f "$SESSAO" ]; then
@@ -252,7 +253,9 @@ cmd_start()
 	feitos="$actual"
 	grava_sessao
 	prepara "$actual" "$RAIZ/rendu/$actual"
-	echo "${B}$exame${X} - niveis 0 a $max, $((duracao / 3600))h"
+	local etiqueta="$exame"
+	[ "$exame" == "exam03" ] && etiqueta="exam03 (o exame final)"
+	echo "${B}$etiqueta${X} - niveis 0 a $max, $((duracao / 3600))h"
 	echo "${C}nivel $nivel${X}  ${B}$actual${X}   pasta: rendu/$actual/"
 	mostra_enunciado "$RAIZ/rendu/$actual"
 	echo "Escreve o codigo e corre  ${B}./exam grade${X}"
@@ -420,9 +423,10 @@ ajuda()
 	cat <<EOF
 ${B}Simulador dos exames da Piscine da 42${X}
 
-  ${B}./exam start${X} [exam00|exam01|exam02|exam03|final]
+  ${B}./exam start${X} [exam00|exam01|exam02|exam03]
         Comeca um exame. Sorteia um exercicio do nivel 0 e cria rendu/<nome>/.
-        Por omissao: final. Duracao: 4h (muda com EXAM_TIME=7200).
+        Por omissao: exam03, que e o exame final da Piscine.
+        Duracao: 4h (muda com EXAM_TIME=7200).
 
   ${B}./exam grade${X}
         Corrige o exercicio actual: compila com -Wall -Wextra -Werror, procura
@@ -437,8 +441,9 @@ ${B}Simulador dos exames da Piscine da 42${X}
   ${B}./exam lista${X} [nivel]  todos os exercicios da pool
   ${B}./exam selftest${X}     corrige as 73 solucoes de referencia (deve dar 73/73)
 
-Os niveis de cada exame: exam00 0-1, exam01 0-2, exam02 0-3, exam03 0-4,
-final 0-5. Nao se salta niveis, tal como no exame a serio.
+A Piscine tem quatro exames e o ultimo, o exam03, e o exame final.
+Niveis: exam00 0-1, exam01 0-2, exam02 0-3, exam03 0-5.
+Nao se salta niveis, tal como no exame a serio.
 EOF
 }
 

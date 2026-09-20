@@ -16,7 +16,7 @@ byte a byte.
 ```sh
 git clone https://github.com/tomascoutotech/42-piscine-exam-trainer
 cd 42-piscine-exam-trainer
-./exam start final
+./exam start exam03
 ```
 
 Precisa de Linux, macOS ou WSL. No Windows, abre o WSL — vais precisar dele para a
@@ -36,7 +36,7 @@ onde falhou e ficas no mesmo nível — como no exame.
 
 | | |
 |---|---|
-| `./exam start [exame]` | começa. `exam00` `exam01` `exam02` `exam03` `final` (por omissão) |
+| `./exam start [exame]` | começa. `exam00` `exam01` `exam02` `exam03` (por omissão) |
 | `./exam grade` | corrige o exercício actual |
 | `./exam status` | em que nível vais e quanto tempo resta |
 | `./exam enunciado` | volta a mostrar o enunciado |
@@ -45,8 +45,11 @@ onde falhou e ficas no mesmo nível — como no exame.
 | `./exam lista [nível]` | os 73 exercícios da pool |
 | `./exam selftest` | corrige as 73 soluções de referência. Tem de dar 73/73 |
 
-Os níveis de cada exame: `exam00` 0–1, `exam01` 0–2, `exam02` 0–3, `exam03` 0–4,
-`final` 0–5. Quatro horas por omissão; para duas, `EXAM_TIME=7200 ./exam start`.
+A Piscine tem **quatro exames**, e o último, o `exam03`, é o exame final. Níveis:
+`exam00` 0–1, `exam01` 0–2, `exam02` 0–3, `exam03` 0–5. É também o que sai por
+omissão, portanto um `./exam start` seco dá-te o exame final.
+
+Quatro horas por omissão; para duas, `EXAM_TIME=7200 ./exam start`.
 
 ## O que a correcção verifica
 

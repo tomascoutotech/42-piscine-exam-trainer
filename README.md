@@ -1,7 +1,8 @@
 # 42 Piscine Exam Trainer
 
-A working simulator for the 42 Piscine exams — exam00 through the final exam — plus
-the full exercise pool, tested reference solutions, and a 111-page study document.
+A working simulator for the four 42 Piscine exams — exam00, exam01, exam02, and
+exam03, which is the final exam — plus the full exercise pool, tested reference
+solutions, and a 111-page study document.
 
 The command-line simulator does what the Moulinette does: it draws one exercise per
 level starting at level 0, compiles your code with `cc -Wall -Wextra -Werror`, checks
@@ -21,7 +22,7 @@ for forbidden functions with `nm`, and diffs your output byte for byte.
 ```sh
 git clone https://github.com/tomascoutotech/42-piscine-exam-trainer
 cd 42-piscine-exam-trainer
-./exam start final
+./exam start exam03
 ```
 
 Needs Linux, macOS or WSL — same as the exam. Then:
@@ -35,8 +36,10 @@ Needs Linux, macOS or WSL — same as the exam. Then:
 ./exam selftest         grades all 73 reference solutions (expects 73/73)
 ```
 
-Exams and their levels: `exam00` 0–1, `exam01` 0–2, `exam02` 0–3, `exam03` 0–4,
-`final` 0–5. Default time is 4 hours (`EXAM_TIME=7200 ./exam start exam01`).
+The Piscine has four exams and the last one, `exam03`, is the final exam. Levels:
+`exam00` 0–1, `exam01` 0–2, `exam02` 0–3, `exam03` 0–5. It is also the default, so
+plain `./exam start` gives you the final exam. Four hours by default
+(`EXAM_TIME=7200 ./exam start exam01`).
 
 ## What a grade actually checks
 

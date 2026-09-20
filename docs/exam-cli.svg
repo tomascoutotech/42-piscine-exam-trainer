@@ -7,9 +7,9 @@
 <circle cx="58" cy="17" r="5" fill="#3ddc84"/>
 <text x="309" y="21" fill="#6b7d95" font-size="11">exam</text>
 <text x="22.0" y="56.0" fill="#5ad8e6" xml:space="preserve">$</text>
-<text x="29.2" y="56.0" fill="#c9d6e6" xml:space="preserve"> ./exam start final</text>
-<text x="22.0" y="73.4" fill="#c9d6e6" font-weight="700" xml:space="preserve">final</text>
-<text x="58.1" y="73.4" fill="#c9d6e6" xml:space="preserve"> - niveis 0 a 5, 4h</text>
+<text x="29.2" y="56.0" fill="#c9d6e6" xml:space="preserve"> ./exam start exam03</text>
+<text x="22.0" y="73.4" fill="#c9d6e6" font-weight="700" xml:space="preserve">exam03 (o exame final)</text>
+<text x="180.8" y="73.4" fill="#c9d6e6" xml:space="preserve"> - niveis 0 a 5, 4h</text>
 <text x="22.0" y="90.8" fill="#5ad8e6" xml:space="preserve">nivel 0</text>
 <text x="72.5" y="90.8" fill="#c9d6e6" xml:space="preserve">  </text>
 <text x="87.0" y="90.8" fill="#c9d6e6" font-weight="700" xml:space="preserve">aff_z</text>
