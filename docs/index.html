@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exames da Piscine &middot; 42</title>
+<meta name="description" content="Simulador dos exames da Piscine da 42: sorteia exercicios por nivel, mostra o enunciado e os testes, e revela a resolucao so depois de tentares.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0f16'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='16' font-weight='bold' fill='%2358a6ff' text-anchor='middle'%3E42%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0b0f16; --panel:#121a25; --panel2:#0e151f; --line:#24314a; --line2:#35486b;
+  --fg:#eef3fa; --mut:#9fb0c7; --mut2:#7688a0;
+  --l0:#3ddc84; --l1:#58a6ff; --l2:#ffa657; --l3:#ff7b5c; --l4:#ff6b6b; --l5:#c084fc;
+  --t-pp:#dcb6ff; --t-str:#8ef29a; --t-type:#8cc8ff; --t-kw:#ff8b83;
+  --t-fn:#f5d264; --t-num:#ffb673; --t-cmt:#93a0b3;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--l1)}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px 64px}
+header{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#101825,#0b0f16)}
+.head{max-width:960px;margin:0 auto;padding:22px 16px 0;display:flex;flex-wrap:wrap;gap:12px;align-items:baseline}
+h1{font-size:19px;margin:0;letter-spacing:.2px}
+h1 span{color:var(--mut2);font-weight:400}
+.tabs{display:flex;gap:4px;margin:16px 0 -1px;flex-wrap:wrap}
+.tab{background:none;border:1px solid transparent;border-bottom:none;color:var(--mut);
+     font:inherit;font-size:14px;padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer}
+.tab:hover{color:var(--fg)}
+.tab.on{background:var(--bg);border-color:var(--line);color:var(--fg);font-weight:600}
+h2{font-size:17px;margin:28px 0 10px}
+p{color:var(--mut);margin:8px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;
+      text-align:left;color:var(--fg);font:inherit;cursor:pointer;transition:border-color .12s}
+.card:hover{border-color:var(--line2)}
+.card b{display:block;font-size:16px;margin-bottom:4px}
+.card small{color:var(--mut2)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+     background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.timer{font:700 20px/1 var(--mono);letter-spacing:1px}
+.timer.low{color:var(--l4)}
+.chip{display:inline-block;font:600 11px/1 var(--mono);letter-spacing:.6px;
+      padding:5px 8px;border-radius:5px;color:#08101c}
+.lv0{background:var(--l0)} .lv1{background:var(--l1)} .lv2{background:var(--l2)}
+.lv3{background:var(--l3)} .lv4{background:var(--l4)} .lv5{background:var(--l5)}
+.nome{font:700 22px/1.2 var(--mono)}
+pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;overflow-x:auto;
+    background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0;tab-size:4}
+pre.sub{white-space:pre-wrap;color:#dbe6f4}
+code{font-family:var(--mono);font-size:.92em;background:#1b2637;border:1px solid var(--line);
+     border-radius:4px;padding:1px 5px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0}
+button.b{background:#1b2637;border:1px solid var(--line2);color:var(--fg);font:inherit;font-size:14px;
+         padding:9px 15px;border-radius:9px;cursor:pointer}
+button.b:hover{background:#243349}
+button.b.go{background:var(--l1);border-color:var(--l1);color:#06101f;font-weight:600}
+button.b.go:hover{filter:brightness(1.1)}
+button.b.warn{border-color:#5a4020;color:#ffc48a}
+.hint{color:var(--mut2);font-size:13px;margin-top:10px}
+.tests .t{border-top:1px solid var(--line);padding:10px 0}
+.tests .t:first-child{border-top:none}
+.cmd{font:600 13px var(--mono);color:var(--t-str)}
+.cmd::before{content:"$> ";color:var(--mut2)}
+.out{font:13px var(--mono);white-space:pre-wrap;color:#cfdcec;margin:6px 0 0;
+     border-left:2px solid var(--line2);padding-left:10px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0}
+input[type=search]{flex:1;min-width:180px;background:var(--panel2);border:1px solid var(--line);
+     color:var(--fg);font:inherit;padding:9px 12px;border-radius:9px}
+.f{background:none;border:1px solid var(--line);color:var(--mut);font:600 12px var(--mono);
+   padding:7px 11px;border-radius:8px;cursor:pointer}
+.f.on{border-color:var(--line2);color:var(--fg);background:#1b2637}
+.lst{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.it{display:flex;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--line);
+    border-radius:9px;padding:9px 11px;cursor:pointer;font:600 13px var(--mono);color:var(--fg);text-align:left}
+.it:hover{border-color:var(--line2)}
+.it .d{width:9px;height:9px;border-radius:50%;flex:none}
+.d0{background:var(--l0)} .d1{background:var(--l1)} .d2{background:var(--l2)}
+.d3{background:var(--l3)} .d4{background:var(--l4)} .d5{background:var(--l5)}
+.tag{font:600 10px/1 var(--mono);color:var(--mut2);border:1px solid var(--line);
+     border-radius:4px;padding:3px 5px;margin-left:auto}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:18px 0;color:var(--mut2);font-size:13px}
+.pp{color:var(--t-pp)} .str{color:var(--t-str)} .ty{color:var(--t-type)} .kw{color:var(--t-kw)}
+.fn{color:var(--t-fn)} .nu{color:var(--t-num)} .cm{color:var(--t-cmt);font-style:italic}
+.hide{display:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <h1>Exames da Piscine <span>&middot; 42</span></h1>
+  </div>
+  <div class="head" style="padding-top:0">
+    <div class="tabs">
+      <button class="tab on" data-v="exame">Simulador</button>
+      <button class="tab" data-v="pool">Os 73 exercicios</button>
+      <button class="tab" data-v="como">Como funciona o exame</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="v-exame"></div>
+  <div id="v-pool" class="hide"></div>
+
+  <div id="v-como" class="hide">
+    <h2>Como funciona o exame</h2>
+    <p>O exame sorteia <b>um exercicio de cada nivel</b>, a comecar no nivel 0. So passas ao
+    nivel seguinte depois de validar o anterior &mdash; nao se salta. Cada exame vai ate a um
+    nivel diferente: o exam00 para no 1, o final vai ate ao 5.</p>
+    <p>A correccao nao corre a norminette. Corre tres coisas:</p>
+    <pre>cc -Wall -Wextra -Werror   compila sem um unico aviso
+nm                         nenhuma funcao alem das permitidas
+diff                       o output igual byte a byte</pre>
+    <p>E por isso que a newline a mais no fim chumba um exercicio inteiro. Corre sempre
+    <code>| cat -e</code>: o <code>$</code> mostra-te onde a linha acaba de verdade.</p>
+
+    <h2>Isto aqui no browser nao compila nada</h2>
+    <p>Esta pagina mostra-te o enunciado, os testes e a resolucao. Quem compila e corrige
+    a serio e o simulador de linha de comandos que esta no repositorio:</p>
+    <pre>git clone https://github.com/tomascoutotech/42-piscine-exam-trainer
+cd 42-piscine-exam-trainer
+./exam start final</pre>
+    <p>Precisa de Linux, macOS ou WSL &mdash; o mesmo que vais ter no exame.</p>
+
+    <h2>O documento</h2>
+    <p>Os 70 exercicios dos niveis 0 a 5 com enunciado, como pensar cada um, o codigo e
+    uma explicacao linha a linha: <a href="exame-final-piscine.pdf">exame-final-piscine.pdf</a>
+    (111 paginas).</p>
+  </div>
+</div>
+
+<footer><div class="wrap" style="padding-bottom:0">Feito por <b>tomanuel</b></div></footer>
+
+<script src="data.js"></script>
+<script>
+var POOL = window.POOL || [];
+var PORNOME = {};
+POOL.forEach(function (e) { PORNOME[e.nome] = e; });
+
+var EXAMES = [
+  { id: "exam00", max: 1, txt: "niveis 0 e 1" },
+  { id: "exam01", max: 2, txt: "niveis 0 a 2" },
+  { id: "exam02", max: 3, txt: "niveis 0 a 3" },
+  { id: "exam03", max: 4, txt: "niveis 0 a 4" },
+  { id: "final", max: 5, txt: "niveis 0 a 5" }
+];
+var DURACAO = 4 * 3600 * 1000;
+
+/* ---------------------------------------------------------- realce de C */
+var TIPOS = ["void","int","char","unsigned","signed","long","short","float","double",
+             "size_t","const","static","struct","union","enum","typedef",
+             "t_list","t_point","t_pos","t_stack"];
+var CHAVES = ["if","else","while","for","return","break","continue","do","switch",
+              "case","default","goto","sizeof"];
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function realce(src) {
+  var re = /(\/\*[^]*?\*\/|\/\/[^\n]*)|(^[ \t]*#[^\n]*)|("(?:[^"\\]|\\.)*")|('(?:[^'\\]|\\.)*')|(\b\d+\b)|([A-Za-z_]\w*)|([^])/gm;
+  return src.replace(re, function (m, cm, pp, st, ch, nu, id) {
+    if (cm) return '<span class="cm">' + esc(cm) + "</span>";
+    if (pp) return '<span class="pp">' + esc(pp) + "</span>";
+    if (st) return '<span class="str">' + esc(st) + "</span>";
+    if (ch) return '<span class="str">' + esc(ch) + "</span>";
+    if (nu) return '<span class="nu">' + nu + "</span>";
+    if (id) {
+      if (TIPOS.indexOf(id) >= 0) return '<span class="ty">' + id + "</span>";
+      if (CHAVES.indexOf(id) >= 0) return '<span class="kw">' + id + "</span>";
+      return id;
+    }
+    return esc(m);
+  });
+}
+
+/* ------------------------------------------------------------- guardado */
+function guarda(k, v) {
+  try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+}
+function le(k) {
+  try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : null; }
+  catch (e) { return null; }
+}
+
+/* --------------------------------------------------------------- pedacos */
+function chip(n) { return '<span class="chip lv' + n + '">NIVEL ' + n + "</span>"; }
+
+function blocoTestes(ex) {
+  if (!ex.casos.length) return "";
+  var h = '<h2>Os testes</h2><p>E exactamente isto que a correccao compara. Corre-os no '
+        + 'teu terminal.</p><div class="panel tests">';
+  ex.casos.forEach(function (c) {
+    h += '<div class="t"><div class="cmd">' + esc(c.cmd) + "</div>"
+      + (c.out ? '<div class="out">' + esc(c.out) + "</div>"
+               : '<div class="out" style="color:#7688a0">(nada, sem contar newlines no fim)</div>')
+      + "</div>";
+  });
+  return h + "</div>";
+}
+
+function blocoCompilar(ex) {
+  var fontes = Object.keys(ex.solucao).filter(function (f) { return /\.c$/.test(f); });
+  var cmd = ex.funcao
+    ? "cc -Wall -Wextra -Werror " + fontes.join(" ") + " main.c -o " + ex.nome
+    : "cc -Wall -Wextra -Werror " + fontes.join(" ") + " -o " + ex.nome;
+  var h = "<h2>Como correr</h2><pre>" + esc(cmd) + "\n./" + ex.nome + " | cat -e</pre>";
+  if (ex.funcao) {
+    h += "<p>Este exercicio e uma funcao: sozinha nao corre. Precisas de um "
+       + "<code>main.c</code> teu para a chamar &mdash; e <b>nunca o entregas</b>, o "
+       + "avaliador tem o dele.</p>";
+  }
+  return h;
+}
+
+function blocoSolucao(ex, id) {
+  var h = '<div id="' + id + '" class="hide">';
+  Object.keys(ex.solucao).forEach(function (f) {
+    h += '<h2 style="font-family:var(--mono);font-size:14px">' + esc(f) + "</h2>"
+      + "<pre>" + realce(ex.solucao[f]) + "</pre>";
+  });
+  if (ex.funcao && ex.main) {
+    h += '<h2 style="font-family:var(--mono);font-size:14px">main.c '
+      + '<span style="color:var(--mut2);font-weight:400">(so para testar)</span></h2>'
+      + "<pre>" + realce(ex.main) + "</pre>";
+  }
+  h += '<p class="hint">Explicacao linha a linha de cada um destes no '
+    + '<a href="exame-final-piscine.pdf">PDF</a>.</p></div>';
+  return h;
+}
+
+function ligaSolucao(botao, alvo) {
+  botao.onclick = function () {
+    var el = document.getElementById(alvo);
+    if (!el.classList.contains("hide")) { el.classList.add("hide"); botao.textContent = "Ver a resolucao"; return; }
+    if (!confirm("Ja tentaste escrever a tua? Ler a resolucao antes de tentar nao ensina nada.")) return;
+    el.classList.remove("hide");
+    botao.textContent = "Esconder a resolucao";
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+}
+
+/* ------------------------------------------------------------ simulador */
+var sessao = le("sessao");
+var tick = null;
+
+function sorteia(nivel, fora) {
+  var c = POOL.filter(function (e) { return e.nivel === nivel && fora.indexOf(e.nome) < 0; });
+  if (!c.length) c = POOL.filter(function (e) { return e.nivel === nivel; });
+  return c[Math.floor(Math.random() * c.length)].nome;
+}
+
+function comeca(id) {
+  var e = EXAMES.filter(function (x) { return x.id === id; })[0];
+  var n = sorteia(0, []);
+  sessao = { exame: id, max: e.max, nivel: 0, actual: n, feitos: [n], inicio: Date.now() };
+  guarda("sessao", sessao);
+  desenhaExame();
+}
+
+function desenhaExame() {
+  var v = document.getElementById("v-exame");
+  if (tick) { clearInterval(tick); tick = null; }
+
+  if (!sessao) {
+    var h = "<h2>Escolhe o exame</h2><p>Sorteia um exercicio por nivel, a comecar no 0, "
+          + "como no exame a serio. Quatro horas.</p><div class=\"grid\">";
+    EXAMES.forEach(function (e) {
+      h += '<button class="card" data-e="' + e.id + '"><b>' + e.id + "</b><small>"
+        + e.txt + "</small></button>";
+    });
+    h += "</div><p class=\"hint\">Esta pagina nao compila nada: mostra-te o enunciado e os "
+      + "testes. Quem corrige a serio e o <code>./exam</code> do repositorio.</p>";
+    v.innerHTML = h;
+    v.querySelectorAll("[data-e]").forEach(function (b) {
+      b.onclick = function () { comeca(b.dataset.e); };
+    });
+    return;
+  }
+
+  var ex = PORNOME[sessao.actual];
+  v.innerHTML =
+      '<div class="bar"><div><b>' + sessao.exame + "</b> "
+    + '<span style="color:var(--mut2)">niveis 0 a ' + sessao.max + "</span></div>"
+    + '<div class="timer" id="clk">--:--:--</div>'
+    + '<button class="b" id="fim">Abandonar</button></div>'
+    + '<div style="margin:22px 0 4px">' + chip(ex.nivel) + "</div>"
+    + '<div class="nome">' + ex.nome + "</div>"
+    + '<pre class="sub">' + esc(ex.enunciado) + "</pre>"
+    + blocoCompilar(ex)
+    + blocoTestes(ex)
+    + '<div class="btns"><button class="b go" id="ok">Validei &mdash; nivel seguinte</button>'
+    + '<button class="b" id="outro">Sortear outro do nivel ' + ex.nivel + "</button>"
+    + '<button class="b warn" id="sol">Ver a resolucao</button></div>'
+    + blocoSolucao(ex, "sol-exame");
+
+  ligaSolucao(document.getElementById("sol"), "sol-exame");
+  document.getElementById("fim").onclick = function () {
+    if (!confirm("Deitar fora este exame?")) return;
+    sessao = null; guarda("sessao", null); desenhaExame();
+  };
+  document.getElementById("outro").onclick = function () {
+    sessao.actual = sorteia(sessao.nivel, sessao.feitos);
+    sessao.feitos.push(sessao.actual);
+    guarda("sessao", sessao); desenhaExame();
+  };
+  document.getElementById("ok").onclick = function () {
+    if (sessao.nivel >= sessao.max) {
+      var m = Math.round((Date.now() - sessao.inicio) / 60000);
+      alert("Acabaste o " + sessao.exame + " em " + m + " minutos.");
+      sessao = null; guarda("sessao", null); desenhaExame(); return;
+    }
+    sessao.nivel++;
+    sessao.actual = sorteia(sessao.nivel, sessao.feitos);
+    sessao.feitos.push(sessao.actual);
+    guarda("sessao", sessao); desenhaExame();
+    window.scrollTo(0, 0);
+  };
+
+  var clk = document.getElementById("clk");
+  function relogio() {
+    var s = Math.floor((sessao.inicio + DURACAO - Date.now()) / 1000);
+    if (s <= 0) { clk.textContent = "00:00:00"; clk.classList.add("low"); return; }
+    if (s < 900) clk.classList.add("low");
+    var p = function (n) { return (n < 10 ? "0" : "") + n; };
+    clk.textContent = p(Math.floor(s / 3600)) + ":" + p(Math.floor(s / 60) % 60) + ":" + p(s % 60);
+  }
+  relogio();
+  tick = setInterval(relogio, 1000);
+}
+
+/* ----------------------------------------------------------------- pool */
+var filtro = -1, busca = "";
+
+function desenhaPool(aberto) {
+  var v = document.getElementById("v-pool");
+  if (aberto) {
+    var ex = PORNOME[aberto];
+    v.innerHTML =
+        '<div class="btns" style="margin:18px 0 0"><button class="b" id="volta">&larr; todos os exercicios</button></div>'
+      + '<div style="margin:22px 0 4px">' + chip(ex.nivel) + "</div>"
+      + '<div class="nome">' + ex.nome + "</div>"
+      + '<pre class="sub">' + esc(ex.enunciado) + "</pre>"
+      + blocoCompilar(ex)
+      + blocoTestes(ex)
+      + '<div class="btns"><button class="b warn" id="sol2">Ver a resolucao</button></div>'
+      + blocoSolucao(ex, "sol-pool");
+    ligaSolucao(document.getElementById("sol2"), "sol-pool");
+    document.getElementById("volta").onclick = function () { desenhaPool(null); window.scrollTo(0, 0); };
+    return;
+  }
+
+  var h = "<h2>Os 73 exercicios da pool</h2>"
+        + '<p>Tudo o que pode sair, dos cinco niveis. Clica para ver o enunciado e os testes.</p>'
+        + '<div class="filters"><input type="search" id="q" placeholder="procurar..." value="'
+        + esc(busca) + '">'
+        + '<button class="f' + (filtro < 0 ? " on" : "") + '" data-f="-1">todos</button>';
+  for (var i = 0; i <= 5; i++) {
+    h += '<button class="f' + (filtro === i ? " on" : "") + '" data-f="' + i + '">nivel ' + i + "</button>";
+  }
+  h += '</div><div class="lst">';
+  var n = 0;
+  POOL.forEach(function (e) {
+    if (filtro >= 0 && e.nivel !== filtro) return;
+    if (busca && e.nome.indexOf(busca.toLowerCase()) < 0) return;
+    n++;
+    h += '<button class="it" data-n="' + e.nome + '"><span class="d d' + e.nivel + '"></span>'
+      + e.nome + (e.funcao ? '<span class="tag">funcao</span>' : '<span class="tag">programa</span>')
+      + "</button>";
+  });
+  h += "</div>";
+  if (!n) h += '<p class="hint">Nada com esse nome.</p>';
+  v.innerHTML = h;
+
+  v.querySelectorAll("[data-f]").forEach(function (b) {
+    b.onclick = function () { filtro = +b.dataset.f; desenhaPool(null); };
+  });
+  v.querySelectorAll("[data-n]").forEach(function (b) {
+    b.onclick = function () { desenhaPool(b.dataset.n); window.scrollTo(0, 0); };
+  });
+  var q = document.getElementById("q");
+  q.oninput = function () {
+    busca = q.value.trim();
+    var pos = q.selectionStart;
+    desenhaPool(null);
+    var q2 = document.getElementById("q");
+    q2.focus(); q2.setSelectionRange(pos, pos);
+  };
+}
+
+/* ----------------------------------------------------------------- tabs */
+document.querySelectorAll(".tab").forEach(function (t) {
+  t.onclick = function () {
+    document.querySelectorAll(".tab").forEach(function (x) { x.classList.remove("on"); });
+    t.classList.add("on");
+    ["exame", "pool", "como"].forEach(function (v) {
+      document.getElementById("v-" + v).classList.toggle("hide", v !== t.dataset.v);
+    });
+    window.scrollTo(0, 0);
+  };
+});
+
+desenhaExame();
+desenhaPool(null);
+</script>
+</body>
+</html>

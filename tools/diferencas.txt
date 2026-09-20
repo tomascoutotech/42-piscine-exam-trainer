@@ -1,0 +1,33 @@
+DIFERENCAS ENTRE O ENUNCIADO E A SOLUCAO DE REFERENCIA
+======================================================
+
+O tools/gen.py compara, caso a caso, o output que o enunciado mostra com o
+output que a solucao de referencia produz. Sempre que os dois nao batem certo,
+imprime um aviso. As tres diferencas que sobram estao explicadas aqui. Se
+aparecer uma quarta, e porque alguma coisa se partiu.
+
+
+aff_first_param   ./aff_first_param
+aff_last_param    ./aff_last_param
+
+    O enunciado mostra "$" como output. Esse "$" e a marca de fim de linha do
+    "cat -e", mas este ultimo exemplo esta escrito sem o "| cat -e" - e um
+    descuido do enunciado. O programa escreve exactamente uma newline, que e o
+    que o texto pede ("If the number of arguments is less than 1, the program
+    displays \n"). Os outros exemplos do mesmo enunciado, esses com "| cat -e",
+    batem certo.
+
+
+fizzbuzz          ./fizzbuzz
+
+    O enunciado corta o meio da lista com "[...]" em vez de mostrar as 100
+    linhas. O caso guardado tem as 100 linhas verdadeiras; o principio e o fim
+    batem certo com o que o enunciado mostra.
+
+
+NOTA SOBRE O check_mate
+-----------------------
+Nao e uma diferenca detectada pelo gerador, mas e um ponto ambiguo conhecido:
+a direccao de captura do peao. O desenho no examples.txt aponta para cima e o
+segundo exemplo do enunciado so da "Success" se for para baixo. A referencia
+segue os exemplos do enunciado, que sao o que a correccao compara.

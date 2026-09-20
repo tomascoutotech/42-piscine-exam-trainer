@@ -1,0 +1,6 @@
+255  (esp 255, ff base 16)
+255  (esp 255, FF maiusculas)
+5  (esp 5, 101 base 2)
+5  (esp 5, 1012 para no 2)
+-42  (esp -42 base 10)
+0  (esp 0, string invalida)

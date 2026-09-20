@@ -1,0 +1,3 @@
+[hello]  (esp hello)
+dest[5] = 0  (esp 0, o terminador)
+[]  (esp vazio)

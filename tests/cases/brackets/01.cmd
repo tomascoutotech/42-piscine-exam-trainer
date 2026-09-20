@@ -1,0 +1,1 @@
+./brackets '(johndoe)' | cat -e

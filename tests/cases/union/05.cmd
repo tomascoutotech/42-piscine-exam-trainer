@@ -1,0 +1,1 @@
+./union "rien" | cat -e

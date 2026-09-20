@@ -1,0 +1,11 @@
+[42] -> teu           42 | real           42
+[-42] -> teu          -42 | real          -42
+[   	
+  42] -> teu           42 | real           42
+[+42] -> teu           42 | real           42
+[--42] -> teu           42 | real            0
+[---42] -> teu          -42 | real            0
+[42abc] -> teu           42 | real           42
+[abc42] -> teu            0 | real            0
+[] -> teu            0 | real            0
+[2147483647] -> teu   2147483647 | real   2147483647

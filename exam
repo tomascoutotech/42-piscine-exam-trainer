@@ -1,0 +1,424 @@
+#!/usr/bin/env bash
+# Simulador dos exames da Piscine da 42.
+#   ./exam                ajuda
+#   ./exam start final    comeca um exame
+#   ./exam grade          corrige o exercicio actual
+# A correccao faz o mesmo que a Moulinette faz: compila com -Wall -Wextra
+# -Werror, ve as funcoes proibidas com nm, e compara o output byte a byte.
+
+RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+POOL="$RAIZ/pool"
+CASOS="$RAIZ/tests/cases"
+MAINS="$RAIZ/tests/mains"
+INCLUDE="$RAIZ/tests/include"
+SOLS="$RAIZ/solucoes"
+SESSAO="$RAIZ/.sessao"
+
+if [ -t 1 ] && [ -z "$NO_COLOR" ]; then
+	V=$'\e[32m'; R=$'\e[31m'; A=$'\e[33m'; C=$'\e[36m'; B=$'\e[1m'; X=$'\e[0m'
+else
+	V=''; R=''; A=''; C=''; B=''; X=''
+fi
+
+# exame -> nivel maximo. O exame final vai ate ao 5; os outros param mais cedo.
+niveis_de()
+{
+	case "$1" in
+		exam00) echo 1 ;;
+		exam01) echo 2 ;;
+		exam02) echo 3 ;;
+		exam03) echo 4 ;;
+		final)  echo 5 ;;
+		*)      echo -1 ;;
+	esac
+}
+
+pasta_do()
+{
+	local d
+	for d in "$POOL"/level*/"$1"; do
+		[ -d "$d" ] && { echo "$d"; return 0; }
+	done
+	return 1
+}
+
+nivel_do()
+{
+	local d; d="$(pasta_do "$1")" || return 1
+	d="$(dirname "$d")"
+	echo "${d##*/level}"
+}
+
+# ----------------------------------------------------------------- correccao
+
+# funcoes que o gcc pode chamar sozinho: avisam, nao chumbam
+IGNORAR="memcpy memset memmove __stack_chk_fail __memcpy_chk __memset_chk"
+
+permitidas_de()
+{
+	sed -n 's/^Allowed functions *: *//p' "$1" | head -1 |
+		tr ',' '\n' | tr -d ' \t' | grep -v '^-\?$'
+}
+
+# $1 = pasta de trabalho, $2 = nome do exercicio
+corrige()
+{
+	local dir="$1" nome="$2"
+	local enunciado; enunciado="$(pasta_do "$nome")/subject.en.txt"
+	local fontes=() f
+	for f in "$dir"/*.c; do [ -e "$f" ] && fontes+=("$(basename "$f")"); done
+	if [ ${#fontes[@]} -eq 0 ]; then
+		echo "${R}Nao ha nenhum .c em $dir${X}"; return 1
+	fi
+
+	local build; build="$(mktemp -d)"
+	trap 'rm -rf "$build"' RETURN
+	cp "$dir"/*.c "$build"/ 2>/dev/null
+	cp "$dir"/*.h "$build"/ 2>/dev/null
+	# headers que o avaliador fornece (nao sao teus, nao se entregam)
+	local h
+	for h in list.h ft_list.h; do
+		if [ ! -e "$build/$h" ] && grep -qs "\"$h\"" "$build"/*.c; then
+			cp "$INCLUDE/$h" "$build"/
+		fi
+	done
+	# exercicios que sao funcao precisam de um main para poderem correr
+	local e_funcao=0
+	if [ -e "$MAINS/$nome.c" ]; then
+		e_funcao=1
+		cp "$MAINS/$nome.c" "$build/zz_main.c"
+	fi
+
+	echo "${B}$nome${X}  ($dir)"
+
+	# 1. compilar
+	local saida
+	if ! saida="$(cd "$build" && cc -Wall -Wextra -Werror ./*.c -o "$nome" 2>&1)"; then
+		echo "  ${R}compilacao FALHOU${X}"
+		echo "$saida" | sed 's/^/    /'
+		return 1
+	fi
+	echo "  ${V}compila${X}  cc -Wall -Wextra -Werror"
+
+	# 2. funcoes proibidas: so nos TEUS ficheiros, nunca no main de teste
+	local permitidas definidas usadas proibidas avisos
+	permitidas="$(permitidas_de "$enunciado")"
+	definidas=""; usadas=""
+	for f in "${fontes[@]}"; do
+		# -fno-builtin: sem isto o gcc troca printf("%c") por putchar e puxa
+		# uma funcao que tu nunca escreveste para a lista de proibidas
+		(cd "$build" && cc -fno-builtin -c "$f" -o "${f%.c}.o" 2>/dev/null) || continue
+		definidas+=$'\n'"$(nm -g --defined-only "$build/${f%.c}.o" 2>/dev/null |
+			awk '{print $NF}')"
+		usadas+=$'\n'"$(nm -u "$build/${f%.c}.o" 2>/dev/null | awk '{print $NF}')"
+	done
+	proibidas=""; avisos=""
+	for f in $(echo "$usadas" | sort -u | grep -v '^$'); do
+		grep -qx "$f" <<<"$definidas" && continue
+		grep -qx "$f" <<<"$permitidas" && continue
+		if grep -qw "$f" <<<"$IGNORAR"; then avisos+=" $f"; else proibidas+=" $f"; fi
+	done
+	if [ -n "$proibidas" ]; then
+		echo "  ${R}funcoes proibidas:${X}$proibidas"
+		echo "    permitidas por este enunciado: $(tr '\n' ' ' <<<"$permitidas")"
+		return 1
+	fi
+	echo "  ${V}funcoes${X}  nenhuma proibida${avisos:+  (o compilador chamou:$avisos)}"
+
+	# 3. output, byte a byte
+	local total=0 ok=0 cmd esperado obtido
+	for c in "$CASOS/$nome"/*.cmd; do
+		[ -e "$c" ] || break
+		total=$((total + 1))
+		cmd="$(cat "$c")"
+		esperado="$(cat "${c%.cmd}.out")"
+		obtido="$(cd "$build" && eval "$cmd" 2>&1)"
+		if [ "$obtido" == "$esperado" ]; then
+			ok=$((ok + 1))
+		else
+			echo "  ${R}diferente${X}  $cmd"
+			diff <(printf '%s\n' "$esperado") <(printf '%s\n' "$obtido") |
+				head -20 | sed 's/^/      /'
+		fi
+	done
+	if [ $total -eq 0 ]; then
+		echo "  ${A}sem casos de teste${X}"; return 1
+	fi
+	if [ $ok -ne $total ]; then
+		echo "  ${R}output   $ok/$total${X}"
+		[ $e_funcao -eq 1 ] && echo "    (o main de teste esta em tests/mains/$nome.c)"
+		return 1
+	fi
+	echo "  ${V}output   $ok/$total${X}"
+	return 0
+}
+
+# --------------------------------------------------------------------- sessao
+
+le_sessao()
+{
+	[ -f "$SESSAO" ] || { echo "${A}Nao ha nenhum exame a decorrer. ./exam start${X}"; exit 1; }
+	# shellcheck disable=SC1090
+	. "$SESSAO"
+}
+
+grava_sessao()
+{
+	cat >"$SESSAO" <<EOF
+modo=$modo
+exame=$exame
+inicio=$inicio
+duracao=$duracao
+nivel=$nivel
+actual=$actual
+tentativas=$tentativas
+feitos="$feitos"
+EOF
+}
+
+sorteia()
+{
+	local lvl="$1" cand=()
+	local d
+	for d in "$POOL/level$lvl"/*/; do
+		d="$(basename "$d")"
+		grep -qw "$d" <<<"$feitos" || cand+=("$d")
+	done
+	[ ${#cand[@]} -eq 0 ] && return 1
+	echo "${cand[RANDOM % ${#cand[@]}]}"
+}
+
+prepara()
+{
+	local nome="$1" dir="$2"
+	mkdir -p "$dir"
+	cp "$(pasta_do "$nome")/subject.en.txt" "$dir/"
+	[ -e "$(pasta_do "$nome")/examples.txt" ] && cp "$(pasta_do "$nome")/examples.txt" "$dir/"
+	# cria vazios os ficheiros que o enunciado pede pelo nome
+	local f
+	for f in $(sed -n 's/^Expected files *: *//p' "$dir/subject.en.txt" | head -1 |
+			tr ',' ' '); do
+		case "$f" in
+			\*.c|\*.h|"") ;;
+			*) [ -e "$dir/$f" ] || : >"$dir/$f" ;;
+		esac
+	done
+}
+
+mostra_enunciado()
+{
+	echo
+	sed 's/^/    /' "$1/subject.en.txt"
+	echo
+}
+
+tempo()
+{
+	local resta=$((inicio + duracao - $(date +%s)))
+	if [ $resta -le 0 ]; then echo "${R}tempo esgotado${X}"; return; fi
+	printf '%02d:%02d:%02d' $((resta / 3600)) $((resta % 3600 / 60)) $((resta % 60))
+}
+
+# ------------------------------------------------------------------- comandos
+
+cmd_start()
+{
+	exame="${1:-final}"
+	local max; max="$(niveis_de "$exame")"
+	if [ "$max" -lt 0 ]; then
+		echo "${R}exame desconhecido: $exame${X}  (exam00 exam01 exam02 exam03 final)"
+		exit 1
+	fi
+	if [ -f "$SESSAO" ]; then
+		read -rp "Ja ha um exame a decorrer. Deitar fora e comecar outro? [s/N] " r
+		[ "$r" == "s" ] || exit 0
+		rm -rf "$RAIZ/rendu"
+	fi
+	modo=exame; inicio="$(date +%s)"; duracao="${EXAM_TIME:-14400}"
+	nivel=0; tentativas=0; feitos=""
+	actual="$(sorteia 0)"
+	feitos="$actual"
+	grava_sessao
+	prepara "$actual" "$RAIZ/rendu/$actual"
+	echo "${B}$exame${X} - niveis 0 a $max, $((duracao / 3600))h"
+	echo "${C}nivel $nivel${X}  ${B}$actual${X}   pasta: rendu/$actual/"
+	mostra_enunciado "$RAIZ/rendu/$actual"
+	echo "Escreve o codigo e corre  ${B}./exam grade${X}"
+}
+
+cmd_grade()
+{
+	le_sessao
+	local dir
+	if [ "$modo" == "treino" ]; then dir="$RAIZ/treino/$actual"; else dir="$RAIZ/rendu/$actual"; fi
+	tentativas=$((tentativas + 1))
+	grava_sessao
+	echo
+	if ! corrige "$dir" "$actual"; then
+		echo
+		echo "${R}nivel $nivel nao validado${X}   tentativa $tentativas"
+		[ "$modo" == "exame" ] && echo "resta $(tempo)"
+		return 1
+	fi
+	echo
+	if [ "$modo" == "treino" ]; then
+		echo "${V}$actual validado${X}  (tentativa $tentativas)"
+		rm -f "$SESSAO"
+		return 0
+	fi
+	echo "${V}nivel $nivel validado${X}  (tentativa $tentativas)  resta $(tempo)"
+	local max; max="$(niveis_de "$exame")"
+	nivel=$((nivel + 1))
+	tentativas=0
+	if [ "$nivel" -gt "$max" ]; then
+		local gasto=$(($(date +%s) - inicio))
+		echo
+		echo "${B}${V}Acabaste o $exame.${X}  Todos os niveis ate ao $max."
+		printf 'tempo total: %02d:%02d:%02d\n' $((gasto / 3600)) $((gasto % 3600 / 60)) $((gasto % 60))
+		rm -f "$SESSAO"
+		return 0
+	fi
+	actual="$(sorteia "$nivel")"
+	feitos="$feitos $actual"
+	grava_sessao
+	prepara "$actual" "$RAIZ/rendu/$actual"
+	echo
+	echo "${C}nivel $nivel${X}  ${B}$actual${X}   pasta: rendu/$actual/"
+	mostra_enunciado "$RAIZ/rendu/$actual"
+}
+
+cmd_status()
+{
+	le_sessao
+	local dir
+	if [ "$modo" == "treino" ]; then dir="treino/$actual"; else dir="rendu/$actual"; fi
+	echo "${B}$exame${X}  nivel $nivel  ${B}$actual${X}  ($dir)"
+	[ "$modo" == "exame" ] && echo "resta $(tempo)   tentativas neste nivel: $tentativas"
+	echo "ja saiu: $feitos"
+}
+
+cmd_enunciado()
+{
+	le_sessao
+	if [ "$modo" == "treino" ]; then mostra_enunciado "$RAIZ/treino/$actual"
+	else mostra_enunciado "$RAIZ/rendu/$actual"; fi
+}
+
+cmd_solucao()
+{
+	local nome="${1:-}"
+	if [ -z "$nome" ]; then
+		le_sessao
+		nome="$actual"
+		if [ "${tentativas:-0}" -eq 0 ]; then
+			echo "${A}Ainda nao tentaste corrigir este exercicio.${X}"
+			echo "Corre ${B}./exam grade${X} primeiro - mesmo que falhe."
+			echo "A solucao so ajuda depois de teres batido com a cabeca na parede."
+			exit 1
+		fi
+	fi
+	pasta_do "$nome" >/dev/null || { echo "${R}nao conheco $nome${X}"; exit 1; }
+	local f
+	for f in "$SOLS/$nome"/*; do
+		echo "${C}--- $(basename "$f")${X}"
+		cat "$f"
+	done
+	if [ -e "$MAINS/$nome.c" ]; then
+		echo "${C}--- main de teste (tests/mains/$nome.c, nunca se entrega)${X}"
+		cat "$MAINS/$nome.c"
+	fi
+	echo
+	echo "Explicacao linha a linha: docs/exame-final-piscine.pdf"
+}
+
+cmd_treino()
+{
+	local alvo="${1:-}"
+	[ -z "$alvo" ] && { echo "${R}./exam treino <nome|0..5>${X}"; exit 1; }
+	feitos=""
+	if [[ "$alvo" =~ ^[0-5]$ ]]; then
+		alvo="$(sorteia "$alvo")"
+	elif ! pasta_do "$alvo" >/dev/null; then
+		echo "${R}nao conheco $alvo${X}   ./exam lista"; exit 1
+	fi
+	modo=treino; exame=treino; inicio="$(date +%s)"; duracao=0
+	nivel="$(nivel_do "$alvo")"; actual="$alvo"; tentativas=0; feitos="$alvo"
+	grava_sessao
+	prepara "$alvo" "$RAIZ/treino/$alvo"
+	echo "${C}nivel $nivel${X}  ${B}$alvo${X}   pasta: treino/$alvo/   (sem cronometro)"
+	mostra_enunciado "$RAIZ/treino/$alvo"
+	echo "Quando acabares:  ${B}./exam grade${X}"
+}
+
+cmd_lista()
+{
+	local lvl d n
+	for lvl in 0 1 2 3 4 5; do
+		[ -n "${1:-}" ] && [ "$1" != "$lvl" ] && continue
+		n=0
+		for d in "$POOL/level$lvl"/*/; do n=$((n + 1)); done
+		echo "${C}nivel $lvl${X}  ($n)"
+		for d in "$POOL/level$lvl"/*/; do printf '    %s\n' "$(basename "$d")"; done
+	done
+}
+
+cmd_selftest()
+{
+	local total=0 ok=0 falhou=""
+	local d nome tmp
+	for d in "$POOL"/level*/*/; do
+		nome="$(basename "$d")"
+		total=$((total + 1))
+		tmp="$(mktemp -d)"
+		cp "$SOLS/$nome"/* "$tmp"/
+		if corrige "$tmp" "$nome" >/dev/null 2>&1; then
+			ok=$((ok + 1))
+		else
+			falhou+=" $nome"
+		fi
+		rm -rf "$tmp"
+	done
+	echo "solucoes de referencia: $ok/$total"
+	if [ -n "$falhou" ]; then echo "${R}falharam:$falhou${X}"; return 1; fi
+	echo "${V}tudo a passar${X}"
+}
+
+ajuda()
+{
+	cat <<EOF
+${B}Simulador dos exames da Piscine da 42${X}
+
+  ${B}./exam start${X} [exam00|exam01|exam02|exam03|final]
+        Comeca um exame. Sorteia um exercicio do nivel 0 e cria rendu/<nome>/.
+        Por omissao: final. Duracao: 4h (muda com EXAM_TIME=7200).
+
+  ${B}./exam grade${X}
+        Corrige o exercicio actual: compila com -Wall -Wextra -Werror, procura
+        funcoes proibidas com nm e compara o output byte a byte. Se passar,
+        sorteia o nivel seguinte.
+
+  ${B}./exam status${X}       em que nivel vais e quanto tempo resta
+  ${B}./exam enunciado${X}    volta a mostrar o enunciado
+  ${B}./exam solucao${X}      revela a solucao (so depois de teres tentado)
+  ${B}./exam treino${X} <nome|0..5>
+        Um exercicio a solo, sem cronometro, em treino/<nome>/.
+  ${B}./exam lista${X} [nivel]  todos os exercicios da pool
+  ${B}./exam selftest${X}     corrige as 73 solucoes de referencia (deve dar 73/73)
+
+Os niveis de cada exame: exam00 0-1, exam01 0-2, exam02 0-3, exam03 0-4,
+final 0-5. Nao se salta niveis, tal como no exame a serio.
+EOF
+}
+
+case "${1:-}" in
+	start)     shift; cmd_start "$@" ;;
+	grade|g)   cmd_grade ;;
+	status|s)  cmd_status ;;
+	enunciado) cmd_enunciado ;;
+	solucao)   shift; cmd_solucao "$@" ;;
+	treino|t)  shift; cmd_treino "$@" ;;
+	lista|l)   shift; cmd_lista "$@" ;;
+	selftest)  cmd_selftest ;;
+	""|-h|--help|help) ajuda ;;
+	*) echo "${R}nao conheco '$1'${X}"; ajuda; exit 1 ;;
+esac

@@ -1,0 +1,1 @@
+./rostring "abc   " | cat -e

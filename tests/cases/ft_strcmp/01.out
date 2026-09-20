@@ -1,0 +1,7 @@
+[abc] vs [abc] -> teu    0 | real    0
+[abc] vs [abd] -> teu   -1 | real   -1
+[abd] vs [abc] -> teu    1 | real    1
+[abc] vs [ab] -> teu   99 | real   99
+[ab] vs [abc] -> teu  -99 | real  -99
+[] vs [] -> teu    0 | real    0
+[ÿ] vs [a] -> teu  158 | real  158

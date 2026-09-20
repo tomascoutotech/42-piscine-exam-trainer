@@ -1,0 +1,8 @@
+# o que se escreve durante um exame
+rendu/
+treino/
+.sessao
+
+# binarios e objectos
+*.o
+a.out

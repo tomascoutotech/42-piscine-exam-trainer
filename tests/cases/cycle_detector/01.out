@@ -1,0 +1,6 @@
+0  (esp 0, sem ciclo)
+1  (esp 1, ciclo ate ao inicio)
+1  (esp 1, laco que nao inclui o 1o no)
+0  (esp 0, lista vazia)
+0  (esp 0, um so no)
+1  (esp 1, no que aponta para si)

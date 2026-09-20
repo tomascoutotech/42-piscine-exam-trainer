@@ -1,0 +1,6 @@
+12  (esp 12)
+21  (esp 21)
+5  (esp 5)
+0  (esp 0, com zero)
+0  (esp 0, com zero)
+4000000000  (esp 4000000000: a*b transbordaria, a/x*b nao)

@@ -1,0 +1,7 @@
+[hello world] -> <hello> <world>   (2 palavras)
+[  espacos  a  mais  ] -> <espacos> <a> <mais>   (3 palavras)
+[tab	e
+newline] -> <tab> <e> <newline>   (3 palavras)
+[] ->   (0 palavras)
+[     ] ->   (0 palavras)
+[uma] -> <uma>   (1 palavras)

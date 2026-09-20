@@ -1,0 +1,8 @@
+itoa_base(         42, 10) = 42
+itoa_base(        -42, 10) = -42
+itoa_base(          0, 10) = 0
+itoa_base(        255, 16) = FF
+itoa_base(        255,  2) = 11111111
+itoa_base(          6,  4) = 12
+itoa_base(        -42, 16) = FFFFFFD6
+itoa_base(-2147483648, 10) = -2147483648

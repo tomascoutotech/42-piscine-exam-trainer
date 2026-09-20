@@ -1,0 +1,11 @@
+moment(0       ) => 0 seconds ago.
+moment(1       ) => 1 second ago.
+moment(59      ) => 59 seconds ago.
+moment(60      ) => 1 minute ago.
+moment(65      ) => 1 minute ago.
+moment(120     ) => 2 minutes ago.
+moment(3599    ) => 59 minutes ago.
+moment(3600    ) => 1 hour ago.
+moment(86400   ) => 1 day ago.
+moment(2591999 ) => 29 days ago.
+moment(2592000 ) => 1 month ago.
