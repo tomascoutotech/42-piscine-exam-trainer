@@ -12,6 +12,8 @@ for forbidden functions with `nm`, and diffs your output byte for byte.
 > The written material is in Portuguese. The exercise statements are the original
 > English ones, exactly as the exam shows them.
 
+<img src="docs/exam-cli.svg" alt="A real ./exam session: level 0 drawn, a failing grade with the diff, then a pass and the next level" width="650">
+
 ---
 
 ## Quick start
@@ -78,6 +80,14 @@ example. Any fourth difference means something broke.
 
 To regenerate everything: `python3 tools/gen.py`.
 
+## The website
+
+[tomascoutotech.github.io/42-piscine-exam-trainer](https://tomascoutotech.github.io/42-piscine-exam-trainer/)
+— draws exercises with a clock, lists all 73 with search, and shows the statement,
+the test cases and the solution. It does not compile anything: browsers do not run C.
+
+<img src="docs/site.png" alt="The web simulator showing a drawn exercise, its statement and its test cases" width="820">
+
 ## The study document
 
 [docs/exame-final-piscine.pdf](docs/exame-final-piscine.pdf) — 111 pages, in
@@ -100,4 +110,7 @@ think about it, the code, and a line-by-line explanation of that code.
 
 ## License
 
-MIT for everything written here. The exercise statements belong to 42.
+[MIT](LICENSE) for the simulator, the solutions, the tools and the document.
+
+The exercise statements under `pool/` are not mine: they belong to 42 / École 42 and
+are reproduced here for study.

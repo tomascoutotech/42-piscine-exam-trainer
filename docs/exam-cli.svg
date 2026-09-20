@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="650" height="779" viewBox="0 0 650 779" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12">
+<rect width="650" height="779" rx="10" fill="#0b0f16"/>
+<rect width="650" height="44" rx="10" fill="#131a25"/>
+<rect y="34" width="650" height="10" fill="#0b0f16"/>
+<circle cx="22" cy="17" r="5" fill="#ff6b6b"/>
+<circle cx="40" cy="17" r="5" fill="#ffa657"/>
+<circle cx="58" cy="17" r="5" fill="#3ddc84"/>
+<text x="309" y="21" fill="#6b7d95" font-size="11">exam</text>
+<text x="22.0" y="56.0" fill="#5ad8e6" xml:space="preserve">$</text>
+<text x="29.2" y="56.0" fill="#c9d6e6" xml:space="preserve"> ./exam start final</text>
+<text x="22.0" y="73.4" fill="#c9d6e6" font-weight="700" xml:space="preserve">final</text>
+<text x="58.1" y="73.4" fill="#c9d6e6" xml:space="preserve"> - niveis 0 a 5, 4h</text>
+<text x="22.0" y="90.8" fill="#5ad8e6" xml:space="preserve">nivel 0</text>
+<text x="72.5" y="90.8" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="87.0" y="90.8" fill="#c9d6e6" font-weight="700" xml:space="preserve">aff_z</text>
+<text x="123.1" y="90.8" fill="#c9d6e6" xml:space="preserve">   pasta: rendu/aff_z/</text>
+<text x="22.0" y="125.6" fill="#c9d6e6" xml:space="preserve">    Assignment name  : aff_z</text>
+<text x="22.0" y="143.0" fill="#c9d6e6" xml:space="preserve">    Expected files   : aff_z.c</text>
+<text x="22.0" y="160.4" fill="#c9d6e6" xml:space="preserve">    Allowed functions: write</text>
+<text x="22.0" y="177.8" fill="#c9d6e6" xml:space="preserve">    --------------------------------------------------------------------------------</text>
+<text x="22.0" y="195.2" fill="#c9d6e6" xml:space="preserve">    </text>
+<text x="22.0" y="212.6" fill="#c9d6e6" xml:space="preserve">    Write a program that takes a string, and displays the first &#x27;z&#x27;</text>
+<text x="22.0" y="230.0" fill="#c9d6e6" xml:space="preserve">    character it encounters in it, followed by a newline. If there are no</text>
+<text x="22.0" y="247.4" fill="#c9d6e6" xml:space="preserve">    &#x27;z&#x27; characters in the string, the program writes &#x27;z&#x27; followed</text>
+<text x="22.0" y="264.8" fill="#c9d6e6" xml:space="preserve">    by a newline. If the number of parameters is not 1, the program displays</text>
+<text x="22.0" y="282.2" fill="#c9d6e6" xml:space="preserve">    &#x27;z&#x27; followed by a newline.</text>
+<text x="22.0" y="299.6" fill="#c9d6e6" xml:space="preserve">                    [ ... o resto do enunciado ... ]</text>
+<text x="22.0" y="317.0" fill="#c9d6e6" xml:space="preserve">Escreve o codigo e corre  </text>
+<text x="209.7" y="317.0" fill="#c9d6e6" font-weight="700" xml:space="preserve">./exam grade</text>
+<text x="22.0" y="334.4" fill="#5ad8e6" xml:space="preserve">$</text>
+<text x="29.2" y="334.4" fill="#c9d6e6" xml:space="preserve"> ./exam grade</text>
+<text x="22.0" y="369.2" fill="#c9d6e6" font-weight="700" xml:space="preserve">aff_z</text>
+<text x="58.1" y="369.2" fill="#c9d6e6" xml:space="preserve">  (rendu/aff_z)</text>
+<text x="22.0" y="386.6" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="36.4" y="386.6" fill="#3ddc84" xml:space="preserve">compila</text>
+<text x="87.0" y="386.6" fill="#c9d6e6" xml:space="preserve">  cc -Wall -Wextra -Werror</text>
+<text x="22.0" y="404.0" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="36.4" y="404.0" fill="#3ddc84" xml:space="preserve">funcoes</text>
+<text x="87.0" y="404.0" fill="#c9d6e6" xml:space="preserve">  nenhuma proibida</text>
+<text x="22.0" y="421.4" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="36.4" y="421.4" fill="#ff6b6b" xml:space="preserve">diferente</text>
+<text x="101.4" y="421.4" fill="#c9d6e6" xml:space="preserve">  ./aff_z &quot;abc&quot; | cat -e</text>
+<text x="22.0" y="438.8" fill="#c9d6e6" xml:space="preserve">      1c1</text>
+<text x="22.0" y="456.2" fill="#c9d6e6" xml:space="preserve">      &lt; z$</text>
+<text x="22.0" y="473.6" fill="#c9d6e6" xml:space="preserve">      ---</text>
+<text x="22.0" y="491.0" fill="#c9d6e6" xml:space="preserve">      &gt; $</text>
+<text x="22.0" y="508.4" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="36.4" y="508.4" fill="#ff6b6b" xml:space="preserve">diferente</text>
+<text x="101.4" y="508.4" fill="#c9d6e6" xml:space="preserve">  [ ... mais 3 casos ... ]</text>
+<text x="22.0" y="525.8" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="36.4" y="525.8" fill="#ff6b6b" xml:space="preserve">output   0/4</text>
+<text x="22.0" y="560.6" fill="#ff6b6b" xml:space="preserve">nivel 0 nao validado</text>
+<text x="166.4" y="560.6" fill="#c9d6e6" xml:space="preserve">   tentativa 1</text>
+<text x="22.0" y="578.0" fill="#c9d6e6" xml:space="preserve">resta 03:59:59</text>
+<text x="22.0" y="595.4" fill="#5ad8e6" xml:space="preserve">$</text>
+<text x="29.2" y="595.4" fill="#c9d6e6" xml:space="preserve"> ./exam grade</text>
+<text x="22.0" y="630.2" fill="#c9d6e6" font-weight="700" xml:space="preserve">aff_z</text>
+<text x="58.1" y="630.2" fill="#c9d6e6" xml:space="preserve">  (rendu/aff_z)</text>
+<text x="22.0" y="647.6" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="36.4" y="647.6" fill="#3ddc84" xml:space="preserve">compila</text>
+<text x="87.0" y="647.6" fill="#c9d6e6" xml:space="preserve">  cc -Wall -Wextra -Werror</text>
+<text x="22.0" y="665.0" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="36.4" y="665.0" fill="#3ddc84" xml:space="preserve">funcoes</text>
+<text x="87.0" y="665.0" fill="#c9d6e6" xml:space="preserve">  nenhuma proibida</text>
+<text x="22.0" y="682.4" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="36.4" y="682.4" fill="#3ddc84" xml:space="preserve">output   4/4</text>
+<text x="22.0" y="717.2" fill="#3ddc84" xml:space="preserve">nivel 0 validado</text>
+<text x="137.5" y="717.2" fill="#c9d6e6" xml:space="preserve">  (tentativa 2)  resta 03:59:58</text>
+<text x="22.0" y="752.0" fill="#5ad8e6" xml:space="preserve">nivel 1</text>
+<text x="72.5" y="752.0" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="87.0" y="752.0" fill="#c9d6e6" font-weight="700" xml:space="preserve">ulstr</text>
+<text x="123.1" y="752.0" fill="#c9d6e6" xml:space="preserve">   pasta: rendu/ulstr/</text>
+</svg>

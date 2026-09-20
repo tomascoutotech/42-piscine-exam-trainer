@@ -89,7 +89,7 @@ corrige()
 		cp "$MAINS/$nome.c" "$build/zz_main.c"
 	fi
 
-	echo "${B}$nome${X}  ($dir)"
+	echo "${B}$nome${X}  (${dir#"$RAIZ"/})"
 
 	# 1. compilar
 	local saida
@@ -126,21 +126,33 @@ corrige()
 	echo "  ${V}funcoes${X}  nenhuma proibida${avisos:+  (o compilador chamou:$avisos)}"
 
 	# 3. output, byte a byte
-	local total=0 ok=0 cmd esperado obtido
+	#
+	# A comparacao e feita entre ficheiros com cmp, nunca entre strings do
+	# bash: o $(...) corta as newlines do fim e isso deixava passar o erro
+	# mais comum do exame. O only_a escreve "a" sem newline nenhuma, e "a\n"
+	# tem de chumbar. O diff mostra-se com "cat -A" para a newline a mais
+	# aparecer como um $ em vez de ser invisivel.
+	local total=0 ok=0 cmd
+	local obtido="$build/.obtido"
 	for c in "$CASOS/$nome"/*.cmd; do
 		[ -e "$c" ] || break
 		total=$((total + 1))
 		cmd="$(cat "$c")"
-		esperado="$(cat "${c%.cmd}.out")"
-		obtido="$(cd "$build" && eval "$cmd" 2>&1)"
-		if [ "$obtido" == "$esperado" ]; then
+		(cd "$build" && eval "$cmd") >"$obtido" 2>&1
+		if cmp -s "$obtido" "${c%.cmd}.out"; then
 			ok=$((ok + 1))
 		else
 			echo "  ${R}diferente${X}  $cmd"
-			diff <(printf '%s\n' "$esperado") <(printf '%s\n' "$obtido") |
-				head -20 | sed 's/^/      /'
+			if [[ "$cmd" == *"cat -e"* ]]; then
+				# o comando ja passa por cat -e: os $ ja la estao
+				diff "${c%.cmd}.out" "$obtido" | head -20 | sed 's/^/      /'
+			else
+				diff <(cat -A "${c%.cmd}.out") <(cat -A "$obtido") |
+					head -20 | sed 's/^/      /'
+			fi
 		fi
 	done
+	rm -f "$obtido"
 	if [ $total -eq 0 ]; then
 		echo "  ${A}sem casos de teste${X}"; return 1
 	fi
@@ -380,7 +392,27 @@ cmd_selftest()
 	done
 	echo "solucoes de referencia: $ok/$total"
 	if [ -n "$falhou" ]; then echo "${R}falharam:$falhou${X}"; return 1; fi
-	echo "${V}tudo a passar${X}"
+
+	# Um corrector que aceitasse tudo tambem dava $total/$total. Esta e a
+	# prova de que nao aceita: o only_a tem de escrever "a" sem newline
+	# nenhuma, e a mesma solucao com "a\n" tem de chumbar.
+	tmp="$(mktemp -d)"
+	cat >"$tmp/only_a.c" <<'FIM'
+#include <unistd.h>
+
+int	main(void)
+{
+	write(1, "a\n", 2);
+	return (0);
+}
+FIM
+	if corrige "$tmp" only_a >/dev/null 2>&1; then
+		rm -rf "$tmp"
+		echo "${R}o corrector aceitou o only_a com uma newline a mais${X}"
+		return 1
+	fi
+	rm -rf "$tmp"
+	echo "${V}tudo a passar${X}   (e a newline a mais chumba, como deve)"
 }
 
 ajuda()

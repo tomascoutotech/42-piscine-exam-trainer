@@ -7,6 +7,8 @@ byte a byte.
 
 **Versão web, sem instalar nada:** https://tomascoutotech.github.io/42-piscine-exam-trainer/
 
+<img src="docs/exam-cli.svg" alt="Uma sessão real do ./exam: nível 0 sorteado, uma correcção falhada com o diff, e depois a que passa" width="650">
+
 ---
 
 ## Começar
@@ -100,6 +102,14 @@ enunciado e um exemplo cortado a meio. Se aparecer uma quarta, partiu-se alguma 
 
 Escrever o valor esperado de cabeça já produziu falsos alarmes suficientes para
 justificar a regra.
+
+## O site
+
+[tomascoutotech.github.io/42-piscine-exam-trainer](https://tomascoutotech.github.io/42-piscine-exam-trainer/)
+— sorteia com cronómetro, lista os 73 com pesquisa, e mostra o enunciado, os testes e
+a resolução. Não compila nada: o browser não corre C.
+
+<img src="docs/site.png" alt="O simulador web com um exercício sorteado, o enunciado e os casos de teste" width="820">
 
 ## O documento
 

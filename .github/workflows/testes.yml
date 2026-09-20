@@ -1,0 +1,18 @@
+name: testes
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: as 73 solucoes de referencia passam
+        run: ./exam selftest
+
+      - name: os casos de teste continuam a bater certo com os enunciados
+        run: python3 tools/gen.py --check

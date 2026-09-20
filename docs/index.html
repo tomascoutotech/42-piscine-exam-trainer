@@ -192,10 +192,16 @@ function blocoTestes(ex) {
   var h = '<h2>Os testes</h2><p>E exactamente isto que a correccao compara. Corre-os no '
         + 'teu terminal.</p><div class="panel tests">';
   ex.casos.forEach(function (c) {
-    h += '<div class="t"><div class="cmd">' + esc(c.cmd) + "</div>"
-      + (c.out ? '<div class="out">' + esc(c.out) + "</div>"
-               : '<div class="out" style="color:#7688a0">(nada, sem contar newlines no fim)</div>')
-      + "</div>";
+    var o;
+    if (c.out === "") {
+      o = '<div class="out" style="color:#7688a0">(nao escreve nada)</div>';
+    } else {
+      // a newline final conta para a nota, por isso diz-se quando nao existe
+      var nota = /\n$/.test(c.out)
+        ? "" : ' <span style="color:#ffa657">&larr; sem newline no fim</span>';
+      o = '<div class="out">' + esc(c.out.replace(/\n$/, "")) + nota + "</div>";
+    }
+    h += '<div class="t"><div class="cmd">' + esc(c.cmd) + "</div>" + o + "</div>";
   });
   return h + "</div>";
 }

@@ -126,11 +126,16 @@ def compila_referencia(nome, destino):
 
 
 def corre(cmd, pasta):
-    # surrogateescape: o print_memory escreve bytes que nao sao UTF-8 e tem de
-    # sobreviver a viagem ate ao ficheiro .out sem serem estragados
+    """O output tal e qual, ate ao ultimo byte.
+
+    Nada de rstrip aqui: a newline a mais no fim e o erro numero um deste
+    exame e o only_a tem de escrever 'a' sem newline nenhuma. Se a captura
+    cortar o fim, o corrector deixa passar exactamente o que devia chumbar.
+    surrogateescape porque o print_memory escreve bytes que nao sao UTF-8.
+    """
     r = subprocess.run(cmd, shell=True, cwd=pasta, capture_output=True,
                        encoding="utf-8", errors="surrogateescape", timeout=10)
-    return r.stdout.rstrip("\n")
+    return r.stdout
 
 
 def limpa(s):
@@ -180,7 +185,10 @@ def main():
                     falhas.append("%s: '%s' nao acaba (timeout 10s)" % (nome, cmd))
                     continue
                 casos.append((cmd, obtido))
-                if mostrado is not None and mostrado != obtido:
+                # o enunciado mostra o output como linhas, sem dizer nada sobre
+                # a newline final: a comparacao com o texto dele ignora-a. O que
+                # fica guardado no .out e que e exacto.
+                if mostrado is not None and mostrado != obtido.rstrip("\n"):
                     avisos.append("%s | %s\n  enunciado: %r\n  referencia: %r"
                                   % (nome, cmd, mostrado, obtido))
 
@@ -191,9 +199,10 @@ def main():
                     with open(os.path.join(d, "%02d.cmd" % i), "w",
                               encoding="utf-8") as fh:
                         fh.write(cmd + "\n")
-                    with open(os.path.join(d, "%02d.out" % i), "w",
+                    # sem newline acrescentada: o ficheiro e os bytes exactos
+                    with open(os.path.join(d, "%02d.out" % i), "w", newline="",
                               encoding="utf-8", errors="surrogateescape") as fh:
-                        fh.write(out + "\n" if out else "")
+                        fh.write(out)
 
             solucao = {}
             for f in sorted(os.listdir(os.path.join(SOLS, nome))):
