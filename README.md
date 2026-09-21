@@ -37,10 +37,15 @@ under Git Bash: see [below](#windows-without-wsl). Then:
 ./exam selftest         grades all 73 reference solutions (expects 73/73)
 ```
 
-The Piscine has four exams and the last one, `exam03`, is the final exam. Levels:
-`exam00` 0–1, `exam01` 0–2, `exam02` 0–3, `exam03` 0–5. It is also the default, so
-plain `./exam start` gives you the final exam. Four hours by default
-(`EXAM_TIME=7200 ./exam start exam01`).
+The Piscine has four exams and the last one, `exam03`, is the final exam — also the
+default, so a bare `./exam start` gives you that one. All four draw from the same
+six-level pool under the same rules: what changes between them is when in the Piscine
+they happen and how much C you know by then, not a level ceiling. I could find no
+source for a per-exam ceiling, so this does not invent one.
+
+Four hours by default (`EXAM_TIME=7200 ./exam start exam01`). For a shorter session,
+`./exam start --ate 2` stops at level 2 — your choice, not something the real exam
+does.
 
 ## What a grade actually checks
 

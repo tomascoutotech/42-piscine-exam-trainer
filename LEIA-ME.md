@@ -36,7 +36,7 @@ onde falhou e ficas no mesmo nível — como no exame.
 
 | | |
 |---|---|
-| `./exam start [exame]` | começa. `exam00` `exam01` `exam02` `exam03` (por omissão) |
+| `./exam start [exame] [--ate N]` | começa. `exam00` `exam01` `exam02` `exam03` (por omissão) |
 | `./exam grade` | corrige o exercício actual |
 | `./exam status` | em que nível vais e quanto tempo resta |
 | `./exam enunciado` | volta a mostrar o enunciado |
@@ -45,11 +45,17 @@ onde falhou e ficas no mesmo nível — como no exame.
 | `./exam lista [nível]` | os 73 exercícios da pool |
 | `./exam selftest` | corrige as 73 soluções de referência. Tem de dar 73/73 |
 
-A Piscine tem **quatro exames**, e o último, o `exam03`, é o exame final. Níveis:
-`exam00` 0–1, `exam01` 0–2, `exam02` 0–3, `exam03` 0–5. É também o que sai por
-omissão, portanto um `./exam start` seco dá-te o exame final.
+A Piscine tem **quatro exames**, e o último, o `exam03`, é o exame final — e é o que
+sai por omissão, portanto um `./exam start` seco dá-te esse.
 
-Quatro horas por omissão; para duas, `EXAM_TIME=7200 ./exam start`.
+Os quatro sorteiam da **mesma pool de seis níveis** e seguem as mesmas regras. O que
+muda entre eles é a altura da Piscine em que acontecem e quanto C já sabes nessa
+altura, **não um tecto de nível**. Não encontrei fonte nenhuma para um tecto por
+exame, por isso isto não inventa um.
+
+Quatro horas por omissão; para duas, `EXAM_TIME=7200 ./exam start`. Para uma sessão
+curta, `./exam start --ate 2` pára no nível 2 — isso é escolha tua, o exame a sério
+acaba é quando o tempo acaba.
 
 ## O que a correcção verifica
 
