@@ -80,15 +80,16 @@ export PATH="$PATH:/c/msys64/ucrt64/bin"       # in Git Bash, before ./exam
 ./exam selftest
 ```
 
-Measured: **72 of the 73** pass there. The simulator undoes two Windows artefacts by
-itself — the `\n` → `\r\n` translation the MinGW runtime applies to program output,
-and MSYS turning a `/` argument into a path like `C:/Program Files/Git`.
+Measured: **all 73 pass there**, same as on Linux. The simulator undoes two Windows
+artefacts by itself — the `\n` → `\r\n` translation the MinGW runtime applies to
+program output, and MSYS turning a `/` argument into a path like `C:/Program Files/Git`.
 
-The one that fails is **`ft_itoa` with `INT_MIN`**, for a real reason: `long` is 32
-bits on Windows, and the solution uses a `long` precisely to hold the `-2147483648`
-that does not fit an `int`. On Linux, where the exam runs, `long` is 64 bits and it
-works. The solution is not wrong; the same line of C means different things on the
-two machines.
+One exercise needed the solution itself to change. `ft_itoa` has to produce
+`-2147483648`, whose positive does not fit an `int`; the usual trick is to hold it in
+a `long`, which works on Linux and breaks on Windows, where `long` is 32 bits. The
+solution uses an `unsigned int` instead: 32 bits everywhere, and negating an unsigned
+is defined by the standard rather than being overflow. Same idea, one fewer
+assumption about the machine.
 
 WSL is still the better way to practise — it is the system you will face in the exam.
 

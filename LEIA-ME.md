@@ -95,16 +95,17 @@ export PATH="$PATH:/c/msys64/ucrt64/bin"
 ./exam selftest
 ```
 
-Testado: **72 dos 73** exercícios passam assim. O simulador desfaz sozinho dois
-estragos que o Windows faz e que nada têm a ver com o teu código — a conversão de
-`\n` em `\r\n` à saída dos programas, e a mania do MSYS de transformar um argumento
-`/` num caminho tipo `C:/Program Files/Git`.
+Testado: **passam os 73**, tal como em Linux. O simulador desfaz sozinho dois estragos
+que o Windows faz e que nada têm a ver com o teu código — a conversão de `\n` em
+`\r\n` à saída dos programas, e a mania do MSYS de transformar um argumento `/` num
+caminho tipo `C:/Program Files/Git`.
 
-O que falha é o **`ft_itoa` com `INT_MIN`**, e por uma razão real: no Windows o
-`long` tem 32 bits, e a resolução usa um `long` precisamente para aguentar o
-`-2147483648` que não cabe num `int`. No Linux, onde o exame corre, o `long` tem 64
-e funciona. Não é um erro da resolução; é a mesma linha de C a significar coisas
-diferentes em duas máquinas.
+Houve um exercício em que foi preciso mudar a própria resolução. O `ft_itoa` tem de
+conseguir escrever `-2147483648`, cujo positivo não cabe num `int`; o truque habitual
+é guardá-lo num `long`, que funciona em Linux e parte no Windows, onde o `long` tem
+32 bits. A resolução usa um `unsigned int`: tem 32 bits em qualquer máquina, e trocar
+o sinal a um `unsigned` é uma conta definida pela norma em vez de ser transbordo. A
+mesma ideia, com menos uma suposição sobre a máquina — e está explicada assim no PDF.
 
 > O WSL continua a ser melhor para treinar: é o mesmo sistema que vais ter à frente
 > no exame. O Git Bash serve para não teres desculpa em nenhum computador.

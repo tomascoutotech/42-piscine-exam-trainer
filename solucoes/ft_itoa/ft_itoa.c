@@ -2,17 +2,17 @@
 
 char	*ft_itoa(int nbr)
 {
-	char	*s;
-	long	n;
-	int		len;
-	int		neg;
+	char			*s;
+	unsigned int	n;
+	int				len;
+	int				neg;
 
-	n = nbr;
 	neg = 0;
-	if (n < 0)
+	n = nbr;
+	if (nbr < 0)
 	{
 		neg = 1;
-		n = -n;
+		n = -(unsigned int)nbr;
 	}
 	len = 1;
 	while (n >= 10)
@@ -27,7 +27,7 @@ char	*ft_itoa(int nbr)
 	s[len] = '\0';
 	n = nbr;
 	if (neg)
-		n = -n;
+		n = -(unsigned int)nbr;
 	while (len-- > neg)
 	{
 		s[len] = n % 10 + '0';
