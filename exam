@@ -14,6 +14,18 @@ INCLUDE="$RAIZ/tests/include"
 SOLS="$RAIZ/solucoes"
 SESSAO="$RAIZ/.sessao"
 
+# No Git Bash / MSYS o runtime do MinGW converte o \n dos programas em \r\n a
+# saida. E um artefacto da plataforma, nao um erro de quem escreveu o codigo,
+# por isso tira-se o \r antes de comparar. No Linux isto nunca corre.
+JANELAS=0
+case "$(uname -s 2>/dev/null)" in MINGW*|MSYS*|CYGWIN*) JANELAS=1 ;; esac
+if [ "$JANELAS" == "1" ]; then
+	# sem isto o MSYS acha que um argumento "/" e um caminho e entrega
+	# "C:/Program Files/Git" ao programa em vez da barra
+	export MSYS_NO_PATHCONV=1
+	export MSYS2_ARG_CONV_EXCL="*"
+fi
+
 if [ -t 1 ] && [ -z "$NO_COLOR" ]; then
 	V=$'\e[32m'; R=$'\e[31m'; A=$'\e[33m'; C=$'\e[36m'; B=$'\e[1m'; X=$'\e[0m'
 else
@@ -51,8 +63,11 @@ nivel_do()
 
 # ----------------------------------------------------------------- correccao
 
-# funcoes que o gcc pode chamar sozinho: avisam, nao chumbam
-IGNORAR="memcpy memset memmove __stack_chk_fail __memcpy_chk __memset_chk"
+# Funcoes que o gcc pode chamar sozinho: avisam, nao chumbam.
+# Tudo o que comeca por __ tambem entra aqui sem estar na lista: o C reserva
+# esses nomes para a implementacao, e nenhum aluno escreve uma chamada a
+# __main (que o MinGW mete em todos os programas) ou a __stack_chk_fail.
+IGNORAR="memcpy memset memmove"
 
 permitidas_de()
 {
@@ -92,8 +107,12 @@ corrige()
 	echo "${B}$nome${X}  (${dir#"$RAIZ"/})"
 
 	# 1. compilar
+	# -std=gnu17 fixa a versao da linguagem que a 42 usa. Sem isso, um gcc 15
+	# recente trata o "int (*cmp)()" do proprio enunciado do ft_list_remove_if
+	# como "sem parametros" (regra nova do C23) e recusa o codigo que a escola
+	# aceita. As flags que contam -- -Wall -Wextra -Werror -- sao as do exame.
 	local saida
-	if ! saida="$(cd "$build" && cc -Wall -Wextra -Werror ./*.c -o "$nome" 2>&1)"; then
+	if ! saida="$(cd "$build" && cc -std=gnu17 -Wall -Wextra -Werror ./*.c -o "$nome" 2>&1)"; then
 		echo "  ${R}compilacao FALHOU${X}"
 		echo "$saida" | sed 's/^/    /'
 		return 1
@@ -116,6 +135,7 @@ corrige()
 	for f in $(echo "$usadas" | sort -u | grep -v '^$'); do
 		grep -qx "$f" <<<"$definidas" && continue
 		grep -qx "$f" <<<"$permitidas" && continue
+		case "$f" in __*) avisos+=" $f"; continue ;; esac
 		if grep -qw "$f" <<<"$IGNORAR"; then avisos+=" $f"; else proibidas+=" $f"; fi
 	done
 	if [ -n "$proibidas" ]; then
@@ -139,6 +159,11 @@ corrige()
 		total=$((total + 1))
 		cmd="$(cat "$c")"
 		(cd "$build" && eval "$cmd") >"$obtido" 2>&1
+		if [ "$JANELAS" == "1" ]; then
+			# tira o \r cru e tambem o ^M que o cat -e ja tornou visivel
+			tr -d '\r' <"$obtido" | sed 's/\^M\$$/$/' >"$obtido.lf"
+			mv "$obtido.lf" "$obtido"
+		fi
 		if cmp -s "$obtido" "${c%.cmd}.out"; then
 			ok=$((ok + 1))
 		else

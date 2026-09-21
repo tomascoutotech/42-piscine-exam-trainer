@@ -25,7 +25,8 @@ cd 42-piscine-exam-trainer
 ./exam start exam03
 ```
 
-Needs Linux, macOS or WSL — same as the exam. Then:
+Needs Linux, macOS or WSL — same as the exam. It also runs on Windows without WSL,
+under Git Bash: see [below](#windows-without-wsl). Then:
 
 ```
 ./exam grade            compile + forbidden functions + byte-for-byte diff
@@ -55,6 +56,29 @@ One extra newline does not.
 The forbidden-function check runs on *your* object files only, compiled with
 `-fno-builtin`. Without that flag gcc rewrites `printf("%c", c)` into `putchar` and
 you get accused of calling a function you never wrote.
+
+## Windows without WSL
+
+It runs under **Git Bash** (bundled with Git for Windows) as long as you have a C
+compiler. MSYS2 is the easy one:
+
+```sh
+winget install MSYS2.MSYS2                     # once, in PowerShell
+export PATH="$PATH:/c/msys64/ucrt64/bin"       # in Git Bash, before ./exam
+./exam selftest
+```
+
+Measured: **72 of the 73** pass there. The simulator undoes two Windows artefacts by
+itself — the `\n` → `\r\n` translation the MinGW runtime applies to program output,
+and MSYS turning a `/` argument into a path like `C:/Program Files/Git`.
+
+The one that fails is **`ft_itoa` with `INT_MIN`**, for a real reason: `long` is 32
+bits on Windows, and the solution uses a `long` precisely to hold the `-2147483648`
+that does not fit an `int`. On Linux, where the exam runs, `long` is 64 bits and it
+works. The solution is not wrong; the same line of C means different things on the
+two machines.
+
+WSL is still the better way to practise — it is the system you will face in the exam.
 
 ## What is in here
 

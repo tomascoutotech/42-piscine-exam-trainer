@@ -48,6 +48,11 @@ int	main(void)
 	mostra(sort_list(l, &ascendente));
 	printf("desc: ");
 	mostra(sort_list(l, &descendente));
-	printf("NULL: %p\n", (void *)sort_list(NULL, &ascendente));
+	// nao se imprime o ponteiro com %p: a glibc escreve (nil) e a libc do
+	// Windows escreve 0000000000000000 para o mesmo NULL
+	if (sort_list(NULL, &ascendente) == NULL)
+		printf("NULL: devolve NULL\n");
+	else
+		printf("NULL: devolve algo, e nao devia\n");
 	return (0);
 }

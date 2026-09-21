@@ -19,8 +19,8 @@ cd 42-piscine-exam-trainer
 ./exam start exam03
 ```
 
-Precisa de Linux, macOS ou WSL. No Windows, abre o WSL — vais precisar dele para a
-Piscine toda, mais vale já.
+Precisa de Linux, macOS ou WSL. No Windows também corre sem WSL, no Git Bash —
+ver [mais abaixo](#windows-sem-wsl).
 
 O `./exam start` sorteia um exercício do nível 0, cria `rendu/<nome>/` com o
 enunciado lá dentro e arranca o cronómetro. Escreves o código nessa pasta e corres:
@@ -68,6 +68,33 @@ número um deste exame é a newline final a mais ou a menos.
 A verificação das funções proibidas só olha para os *teus* ficheiros, compilados com
 `-fno-builtin`. Sem essa flag o gcc troca o teu `printf("%c", c)` por `putchar` e
 depois acusa-te de chamar uma função que nunca escreveste.
+
+## Windows sem WSL
+
+Corre no **Git Bash** (o que vem com o Git para Windows) desde que tenhas um
+compilador de C. O mais simples é o MSYS2:
+
+```sh
+# instala uma vez, no PowerShell
+winget install MSYS2.MSYS2
+# e no Git Bash, antes de correres o ./exam
+export PATH="$PATH:/c/msys64/ucrt64/bin"
+./exam selftest
+```
+
+Testado: **72 dos 73** exercícios passam assim. O simulador desfaz sozinho dois
+estragos que o Windows faz e que nada têm a ver com o teu código — a conversão de
+`\n` em `\r\n` à saída dos programas, e a mania do MSYS de transformar um argumento
+`/` num caminho tipo `C:/Program Files/Git`.
+
+O que falha é o **`ft_itoa` com `INT_MIN`**, e por uma razão real: no Windows o
+`long` tem 32 bits, e a resolução usa um `long` precisamente para aguentar o
+`-2147483648` que não cabe num `int`. No Linux, onde o exame corre, o `long` tem 64
+e funciona. Não é um erro da resolução; é a mesma linha de C a significar coisas
+diferentes em duas máquinas.
+
+> O WSL continua a ser melhor para treinar: é o mesmo sistema que vais ter à frente
+> no exame. O Git Bash serve para não teres desculpa em nenhum computador.
 
 ## Exercícios que são funções
 
