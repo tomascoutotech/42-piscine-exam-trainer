@@ -130,9 +130,12 @@ the test cases and the solution. It does not compile anything: browsers do not r
 
 ## The study document
 
-[docs/exame-final-piscine.pdf](docs/exame-final-piscine.pdf) — 111 pages, in
-Portuguese. All 70 final-exam exercises, each with what the subject asks for, how to
-think about it, the code, and a line-by-line explanation of that code.
+All 70 final-exam exercises, each with what the subject asks for, how to think
+about it, the code, and a line-by-line explanation of that code. Same content,
+two languages:
+
+- [docs/final-exam-piscine-en.pdf](docs/final-exam-piscine-en.pdf) — 110 pages, English
+- [docs/exame-final-piscine.pdf](docs/exame-final-piscine.pdf) — 111 pages, Portuguese
 
 The pool has 73. The three that have no page in the document are `moment`,
 `biggest_pal` and `cycle_detector` — rarer ones that came from the public collections.

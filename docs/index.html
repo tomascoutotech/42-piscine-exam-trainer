@@ -132,8 +132,9 @@ cd 42-piscine-exam-trainer
 
     <h2>O documento</h2>
     <p>Os 70 exercicios dos niveis 0 a 5 com enunciado, como pensar cada um, o codigo e
-    uma explicacao linha a linha: <a href="exame-final-piscine.pdf">exame-final-piscine.pdf</a>
-    (111 paginas).</p>
+    uma explicacao linha a linha. Mesmo conteudo, duas linguas:
+    <a href="exame-final-piscine.pdf">portugues</a> (111 paginas) &middot;
+    <a href="final-exam-piscine-en.pdf">english</a> (110 pages).</p>
   </div>
 </div>
 
@@ -237,14 +238,16 @@ function blocoSolucao(ex, id) {
       + '<span style="color:var(--mut2);font-weight:400">(so para testar)</span></h2>'
       + "<pre>" + realce(ex.main) + "</pre>";
   }
-  // o PDF cobre os 70 do exame final; estes tres vieram das coleccoes
-  // publicas e nao tem pagina la dentro
+  // os PDFs cobrem os 70 do exame final; estes tres vieram das coleccoes
+  // publicas e nao tem pagina la dentro, em nenhuma das duas linguas
   if (["moment", "biggest_pal", "cycle_detector"].indexOf(ex.nome) >= 0) {
-    h += '<p class="hint">Este nao tem pagina no '
-      + '<a href="exame-final-piscine.pdf">PDF</a>, que cobre os 70 do exame final.</p>';
+    h += '<p class="hint">Este nao tem pagina no PDF ('
+      + '<a href="exame-final-piscine.pdf">portugues</a> &middot; '
+      + '<a href="final-exam-piscine-en.pdf">english</a>), que cobre os 70 do exame final.</p>';
   } else {
-    h += '<p class="hint">Explicacao linha a linha de cada um destes no '
-      + '<a href="exame-final-piscine.pdf">PDF</a>.</p>';
+    h += '<p class="hint">Explicacao linha a linha de cada um destes no PDF: '
+      + '<a href="exame-final-piscine.pdf">portugues</a> &middot; '
+      + '<a href="final-exam-piscine-en.pdf">english</a>.</p>';
   }
   h += "</div>";
   return h;
