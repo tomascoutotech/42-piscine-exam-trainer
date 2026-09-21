@@ -134,6 +134,11 @@ the test cases and the solution. It does not compile anything: browsers do not r
 Portuguese. All 70 final-exam exercises, each with what the subject asks for, how to
 think about it, the code, and a line-by-line explanation of that code.
 
+The pool has 73. The three that have no page in the document are `moment`,
+`biggest_pal` and `cycle_detector` — rarer ones that came from the public collections.
+Their subject and a tested solution are here; the walkthrough is not, and both `./exam
+solucao` and the website say so when you open one of them.
+
 ## Honest limits
 
 - **This pool is reconstructed, not official.** It comes from public collections that

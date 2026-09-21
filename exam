@@ -381,7 +381,15 @@ cmd_solucao()
 		cat "$MAINS/$nome.c"
 	fi
 	echo
-	echo "Explicacao linha a linha: docs/exame-final-piscine.pdf"
+	# o PDF cobre os 70 exercicios do exame final; estes tres entraram na pool
+	# por virem de colecoes publicas e nao tem pagina la dentro
+	if grep -qw "$nome" <<<"moment biggest_pal cycle_detector"; then
+		echo "${A}Este nao tem pagina no PDF${X}, que cobre os 70 do exame final."
+		local d; d="$(pasta_do "$nome")"
+		echo "O enunciado esta em ${d#"$RAIZ"/}/subject.en.txt"
+	else
+		echo "Explicacao linha a linha: docs/exame-final-piscine.pdf"
+	fi
 }
 
 cmd_treino()

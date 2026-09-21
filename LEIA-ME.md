@@ -157,6 +157,12 @@ a resolução. Não compila nada: o browser não corre C.
 
 ## O documento
 
+A pool tem 73 exercícios e o documento cobre 70. Os três que **não** têm página lá
+dentro são o `moment`, o `biggest_pal` e o `cycle_detector` — os mais raros, que
+vieram das colecções públicas. Têm aqui o enunciado e uma resolução testada; o que
+não têm é a explicação linha a linha, e tanto o `./exam solucao` como o site to dizem
+quando abres um deles.
+
 [docs/exame-final-piscine.pdf](docs/exame-final-piscine.pdf) — 111 páginas. Os 70
 exercícios dos níveis 0 a 5, cada um com o que o enunciado pede, como pensar nele, o
 código, e uma explicação linha a linha desse código.

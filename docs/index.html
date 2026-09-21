@@ -237,8 +237,16 @@ function blocoSolucao(ex, id) {
       + '<span style="color:var(--mut2);font-weight:400">(so para testar)</span></h2>'
       + "<pre>" + realce(ex.main) + "</pre>";
   }
-  h += '<p class="hint">Explicacao linha a linha de cada um destes no '
-    + '<a href="exame-final-piscine.pdf">PDF</a>.</p></div>';
+  // o PDF cobre os 70 do exame final; estes tres vieram das coleccoes
+  // publicas e nao tem pagina la dentro
+  if (["moment", "biggest_pal", "cycle_detector"].indexOf(ex.nome) >= 0) {
+    h += '<p class="hint">Este nao tem pagina no '
+      + '<a href="exame-final-piscine.pdf">PDF</a>, que cobre os 70 do exame final.</p>';
+  } else {
+    h += '<p class="hint">Explicacao linha a linha de cada um destes no '
+      + '<a href="exame-final-piscine.pdf">PDF</a>.</p>';
+  }
+  h += "</div>";
   return h;
 }
 
