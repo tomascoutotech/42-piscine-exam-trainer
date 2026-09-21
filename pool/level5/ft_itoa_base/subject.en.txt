@@ -18,3 +18,11 @@ minus sign (-). With any other base, value is always considered unsigned.
 Your function must be declared as follows:
 
 char	*ft_itoa_base(int value, int base);
+
+Example:
+
+ft_itoa_base(42, 10)   => "42"
+ft_itoa_base(-42, 10)  => "-42"
+ft_itoa_base(255, 16)  => "FF"
+ft_itoa_base(5, 2)     => "101"
+ft_itoa_base(-42, 16)  => "FFFFFFD6"   (not base 10: unsigned)

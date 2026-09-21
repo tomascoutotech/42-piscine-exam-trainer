@@ -1,1 +1,1 @@
-./only_a
+./only_a | cat -e

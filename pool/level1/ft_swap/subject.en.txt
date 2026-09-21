@@ -9,3 +9,8 @@ are passed as parameters.
 Your function must be declared as follows:
 
 void	ft_swap(int *a, int *b);
+
+Example:
+
+a = 1, b = 2  =>  ft_swap(&a, &b)  =>  a = 2, b = 1
+a = -5, b = 42  =>  ft_swap(&a, &b)  =>  a = 42, b = -5

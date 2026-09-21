@@ -11,3 +11,8 @@ character.
 Your function must be declared as follows:
 
 void	ft_putstr(char *str);
+
+Example:
+
+ft_putstr("Hello")  prints  Hello   (no newline at the end)
+ft_putstr("")       prints  nothing

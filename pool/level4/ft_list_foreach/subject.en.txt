@@ -22,3 +22,10 @@ typedef struct    s_list
     struct s_list *next;
     void          *data;
 }                 t_list;
+
+Example:
+
+with f printing <data>, on the list a -> b -> c:
+
+ft_list_foreach(a, f)     => <a><b><c>
+ft_list_foreach(NULL, f)  => (nothing, no crash)

@@ -11,3 +11,11 @@ It works much like the standard atoi(const char *str) function, see the man.
 Your function must be declared as follows:
 
 int	ft_atoi(const char *str);
+
+Example:
+
+ft_atoi("42")          => 42
+ft_atoi("   -42")      => -42
+ft_atoi("+1234ab")     => 1234
+ft_atoi("abc")         => 0
+ft_atoi("2147483647")  => 2147483647

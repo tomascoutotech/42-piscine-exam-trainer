@@ -26,3 +26,9 @@ typedef struct     s_list
 
 This type will be included in a header named "list.h". You don't have to turn-in
 your "list.h", we will use ours during the evaluation.
+
+Example:
+
+1 -> 2 -> 3 -> NULL       => 0   (no cycle)
+1 -> 2 -> 3 -> back to 1  => 1   (cycle)
+NULL                      => 0

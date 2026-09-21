@@ -8,3 +8,9 @@ Write a function that returns the length of a string.
 Your function must be declared as follows:
 
 int	ft_strlen(char *str);
+
+Example:
+
+ft_strlen("hello")  => 5
+ft_strlen("")       => 0
+ft_strlen("42 ")    => 3

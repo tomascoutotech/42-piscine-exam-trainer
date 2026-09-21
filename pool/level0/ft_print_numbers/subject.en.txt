@@ -9,3 +9,6 @@ Your function must be declared as follows:
 
 void	ft_print_numbers(void);
 
+Example:
+
+ft_print_numbers()  prints  0123456789   (no newline at the end)

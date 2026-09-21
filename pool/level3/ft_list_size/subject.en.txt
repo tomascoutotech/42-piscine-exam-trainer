@@ -18,3 +18,9 @@ typedef struct    s_list
     struct s_list *next;
     void          *data;
 }                 t_list;
+
+Example:
+
+ft_list_size(a -> b -> c)  => 3
+ft_list_size(a)            => 1
+ft_list_size(NULL)         => 0

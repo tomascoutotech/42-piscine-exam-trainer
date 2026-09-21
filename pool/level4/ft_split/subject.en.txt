@@ -12,3 +12,10 @@ lines, or by the start/end of the string.
 Your function must be declared as follows:
 
 char    **ft_split(char *str);
+
+Example:
+
+ft_split("hello world")       => "hello", "world", NULL
+ft_split("  a   b  ")         => "a", "b", NULL
+ft_split("one\ttwo\nthree")   => "one", "two", "three", NULL
+ft_split("")                  => NULL   (only the terminator)

@@ -182,6 +182,12 @@ O objectivo não é decorar resoluções. É chegares ao exame e reconheceres o 
 
 ## O que isto não é
 
+- **Alguns enunciados levam exemplos que o exame não dá.** O exame a sério entrega à
+  maioria das funções o protótipo e mais nada — exemplo nenhum. Aqui todos os
+  enunciados acabam num bloco `Example:`, para poderes conferir se percebeste o
+  problema sem abrires a resolução. Esses blocos não são da 42: cada linha é o output
+  da solução de referência, gerada como os casos de teste são e nunca escrita à mão.
+  O resto do enunciado está intacto. Treina a saber que o exame te diz menos.
 - **A pool não é oficial.** Foi reconstruída a partir de colecções públicas que
   concordam entre si, cruzadas com ficheiros de resultado de exames reais. É boa
   evidência; não é a fonte. A pool varia entre campus e entre anos, e nenhum exame

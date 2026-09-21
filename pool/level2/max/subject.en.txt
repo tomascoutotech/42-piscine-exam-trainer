@@ -13,3 +13,9 @@ the array.
 The function returns the largest number found in the array.
 
 If the array is empty, the function returns 0.
+
+Example:
+
+max((int[]){1, 9, 4}, 3)     => 9
+max((int[]){-7, -2, -9}, 3)  => -2
+max(tab, 0)                  => 0   (empty array)

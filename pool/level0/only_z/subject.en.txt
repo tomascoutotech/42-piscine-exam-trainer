@@ -4,3 +4,9 @@ Allowed functions: write
 --------------------------------------------------------------------------------
 
 Write a program that displays a 'z' character on the standard output.
+
+Example:
+
+$> ./only_z | cat -e
+z
+$>

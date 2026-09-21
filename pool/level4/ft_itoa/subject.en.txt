@@ -9,3 +9,10 @@ The function returns the result in a char array that you must allocate.
 Your function must be declared as follows:
 
 char	*ft_itoa(int nbr);
+
+Example:
+
+ft_itoa(42)           => "42"
+ft_itoa(0)            => "0"
+ft_itoa(-123)         => "-123"
+ft_itoa(-2147483648)  => "-2147483648"

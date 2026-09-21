@@ -18,3 +18,11 @@ string.
 Your function must be declared as follows:
 
 int	ft_atoi_base(const char *str, int str_base);
+
+Example:
+
+ft_atoi_base("101", 2)     => 5
+ft_atoi_base("ff", 16)     => 255
+ft_atoi_base("FF", 16)     => 255
+ft_atoi_base("-42", 10)    => -42
+ft_atoi_base("123", 4)     => 27

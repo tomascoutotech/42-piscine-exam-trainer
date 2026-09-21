@@ -26,3 +26,10 @@ If at least one integer is null, LCM is equal to 0.
 Your function must be prototyped as follows:
 
 unsigned int lcm(unsigned int a, unsigned int b);
+
+Example:
+
+lcm(4, 6)   => 12
+lcm(3, 5)   => 15
+lcm(12, 12) => 12
+lcm(7, 0)   => 0

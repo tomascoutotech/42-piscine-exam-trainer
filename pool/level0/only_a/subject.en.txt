@@ -4,3 +4,9 @@ Allowed functions: write
 --------------------------------------------------------------------------------
 
 Write a program that displays a 'a' character on the standard output.
+
+Example:
+
+$> ./only_a | cat -e
+a
+$>
