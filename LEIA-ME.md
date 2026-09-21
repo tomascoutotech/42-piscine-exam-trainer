@@ -69,6 +69,13 @@ A verificação das funções proibidas só olha para os *teus* ficheiros, compi
 `-fno-builtin`. Sem essa flag o gcc troca o teu `printf("%c", c)` por `putchar` e
 depois acusa-te de chamar uma função que nunca escreveste.
 
+Há duas flags aqui que o exame não usa, as duas para o teu compilador não te chumbar
+por algo que o da escola aceitaria: o `-fno-builtin` acima, e o `-std=gnu17` na
+compilação. Sem o segundo, um gcc 15 lê o `int (*cmp)()` que o próprio enunciado do
+`ft_list_remove_if` manda usar como "não leva argumentos" — regra nova do C23 — e
+recusa o código. As flags que decidem a tua nota, `-Wall -Wextra -Werror`, são as do
+exame.
+
 ## Windows sem WSL
 
 Corre no **Git Bash** (o que vem com o Git para Windows) desde que tenhas um

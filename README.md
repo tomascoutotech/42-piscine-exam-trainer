@@ -57,6 +57,13 @@ The forbidden-function check runs on *your* object files only, compiled with
 `-fno-builtin`. Without that flag gcc rewrites `printf("%c", c)` into `putchar` and
 you get accused of calling a function you never wrote.
 
+Two flags are added that the exam does not use, both to stop your toolchain from
+failing you over something the school's would accept: `-fno-builtin` above, and
+`-std=gnu17` on the compile. Without the second one, a gcc 15 reads the
+`int (*cmp)()` that the `ft_list_remove_if` subject itself prescribes as "takes no
+arguments" — a C23 rule — and refuses the code. The flags that decide your grade,
+`-Wall -Wextra -Werror`, are the exam's.
+
 ## Windows without WSL
 
 It runs under **Git Bash** (bundled with Git for Windows) as long as you have a C
