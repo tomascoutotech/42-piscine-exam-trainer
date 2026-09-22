@@ -33,10 +33,46 @@ else
 fi
 
 # A Piscine tem quatro exames e o ultimo, o exam03, e o exame final. Os quatro
-# usam a mesma pool de seis niveis e as mesmas regras: o que muda entre eles e
-# a altura da Piscine em que acontecem e quanto C ja sabes, nao um tecto de
-# nivel. Nao ha fonte nenhuma para um tecto por exame, por isso nao se inventa
-# um aqui -- quem quiser uma sessao mais curta usa o --ate.
+# usam a mesma pool de seis niveis e as mesmas regras. O exame final dura oito
+# horas; os outros tres, quatro. Nao ha tecto de nivel em nenhum deles -- quem
+# quiser uma sessao mais curta usa o --ate.
+
+# Quantas perguntas saem por nivel. Sao 16 ao todo: as primeiras 15 valem 6
+# pontos (90) e a ultima vale 10, o que fecha nos 100. Passa-se aos 30, isto e,
+# com as cinco primeiras certas -- e por isso que os niveis baixos levam menos
+# perguntas e o meio leva mais: e no meio que se decide a passagem.
+PERGUNTAS=(2 3 3 3 3 2)
+TOTAL_PERGUNTAS=16
+PONTOS_NORMAIS=6
+PONTOS_ULTIMA=10
+PASSAGEM=30
+
+# Quanto vale a pergunta numero $1 (contando de 1).
+vale()
+{
+	if [ "$1" -ge "$TOTAL_PERGUNTAS" ]; then echo "$PONTOS_ULTIMA"
+	else echo "$PONTOS_NORMAIS"; fi
+}
+
+# Quantas perguntas tem um exame que pare no nivel $1.
+perguntas_ate()
+{
+	local i=0 soma=0
+	while [ "$i" -le "$1" ]; do soma=$((soma + PERGUNTAS[i])); i=$((i + 1)); done
+	echo "$soma"
+}
+
+# O maximo que da para somar num exame de $1 perguntas.
+maximo_de()
+{
+	local n="$1"
+	if [ "$n" -ge "$TOTAL_PERGUNTAS" ]; then
+		echo $(((TOTAL_PERGUNTAS - 1) * PONTOS_NORMAIS + PONTOS_ULTIMA))
+	else
+		echo $((n * PONTOS_NORMAIS))
+	fi
+}
+
 e_exame()
 {
 	case "$1" in
@@ -197,6 +233,7 @@ le_sessao()
 	[ -f "$SESSAO" ] || { echo "${A}Nao ha nenhum exame a decorrer. ./exam start${X}"; exit 1; }
 	# shellcheck disable=SC1090
 	. "$SESSAO"
+	: "${pergunta:=1}" "${no_nivel:=0}" "${pontos:=0}"
 }
 
 grava_sessao()
@@ -210,6 +247,9 @@ max=$max
 nivel=$nivel
 actual=$actual
 tentativas=$tentativas
+pergunta=$pergunta
+no_nivel=$no_nivel
+pontos=$pontos
 feitos="$feitos"
 EOF
 }
@@ -284,17 +324,23 @@ cmd_start()
 		[ "$r" == "s" ] || exit 0
 		rm -rf "$RAIZ/rendu"
 	fi
-	modo=exame; inicio="$(date +%s)"; duracao="${EXAM_TIME:-14400}"
+	# o exame final leva o dobro do tempo dos outros tres
+	local horas=14400
+	[ "$exame" == "exam03" ] && horas=28800
+	modo=exame; inicio="$(date +%s)"; duracao="${EXAM_TIME:-$horas}"
 	nivel=0; tentativas=0; feitos=""
+	pergunta=1; no_nivel=0; pontos=0
 	actual="$(sorteia 0)"
 	feitos="$actual"
 	grava_sessao
 	prepara "$actual" "$RAIZ/rendu/$actual"
 	local etiqueta="$exame"
 	[ "$exame" == "exam03" ] && etiqueta="exam03 (o exame final)"
-	echo "${B}$etiqueta${X} - niveis 0 a $max, $((duracao / 3600))h"
+	local n; n="$(perguntas_ate "$max")"
+	echo "${B}$etiqueta${X} - niveis 0 a $max, $((duracao / 3600))h, $n perguntas ate $(maximo_de "$n") pontos"
+	echo "${C}passa-se aos $PASSAGEM${X}, ou seja com as cinco primeiras certas"
 	[ "$max" -lt 5 ] && echo "${A}(paras no nivel $max porque pediste --ate; o exame a serio nao tem tecto)${X}"
-	echo "${C}nivel $nivel${X}  ${B}$actual${X}   pasta: rendu/$actual/"
+	echo "${C}pergunta 1/$n${X}  ${C}nivel $nivel${X}  ${B}$actual${X}   pasta: rendu/$actual/"
 	mostra_enunciado "$RAIZ/rendu/$actual"
 	echo "Escreve o codigo e corre  ${B}./exam grade${X}"
 }
@@ -309,8 +355,8 @@ cmd_grade()
 	echo
 	if ! corrige "$dir" "$actual"; then
 		echo
-		echo "${R}nivel $nivel nao validado${X}   tentativa $tentativas"
-		[ "$modo" == "exame" ] && echo "resta $(tempo)"
+		echo "${R}$actual nao validado${X}   tentativa $tentativas"
+		[ "$modo" == "exame" ] && echo "$pontos pontos   resta $(tempo)"
 		return 1
 	fi
 	echo
@@ -319,14 +365,26 @@ cmd_grade()
 		rm -f "$SESSAO"
 		return 0
 	fi
-	echo "${V}nivel $nivel validado${X}  (tentativa $tentativas)  resta $(tempo)"
 	max="${max:-5}"
-	nivel=$((nivel + 1))
+	local ganhos total anterior
+	ganhos="$(vale "$pergunta")"
+	anterior="$pontos"
+	pontos=$((pontos + ganhos))
+	total="$(perguntas_ate "$max")"
+	echo "${V}pergunta $pergunta validada${X}  (tentativa $tentativas)  ${B}+$ganhos${X} -> ${B}$pontos pontos${X}   resta $(tempo)"
+	if [ "$anterior" -lt "$PASSAGEM" ] && [ "$pontos" -ge "$PASSAGEM" ]; then
+		echo "${V}${B}Passaste: $pontos >= $PASSAGEM.${X}  O resto e nota."
+	fi
 	tentativas=0
-	if [ "$nivel" -gt "$max" ]; then
+	no_nivel=$((no_nivel + 1))
+	pergunta=$((pergunta + 1))
+	if [ "$no_nivel" -ge "${PERGUNTAS[nivel]}" ]; then
+		nivel=$((nivel + 1)); no_nivel=0
+	fi
+	if [ "$pergunta" -gt "$total" ] || [ "$nivel" -gt "$max" ]; then
 		local gasto=$(($(date +%s) - inicio))
 		echo
-		echo "${B}${V}Acabaste o $exame.${X}  Todos os niveis ate ao $max."
+		echo "${B}${V}Acabaste o $exame.${X}  ${B}$pontos${X} de $(maximo_de "$total") pontos."
 		printf 'tempo total: %02d:%02d:%02d\n' $((gasto / 3600)) $((gasto % 3600 / 60)) $((gasto % 60))
 		rm -f "$SESSAO"
 		return 0
@@ -336,7 +394,7 @@ cmd_grade()
 	grava_sessao
 	prepara "$actual" "$RAIZ/rendu/$actual"
 	echo
-	echo "${C}nivel $nivel${X}  ${B}$actual${X}   pasta: rendu/$actual/"
+	echo "${C}pergunta $pergunta/$total${X}  ${C}nivel $nivel${X}  ${B}$actual${X}   pasta: rendu/$actual/"
 	mostra_enunciado "$RAIZ/rendu/$actual"
 }
 
@@ -345,8 +403,14 @@ cmd_status()
 	le_sessao
 	local dir
 	if [ "$modo" == "treino" ]; then dir="treino/$actual"; else dir="rendu/$actual"; fi
-	echo "${B}$exame${X}  nivel $nivel  ${B}$actual${X}  ($dir)"
-	[ "$modo" == "exame" ] && echo "resta $(tempo)   tentativas neste nivel: $tentativas"
+	if [ "$modo" == "exame" ]; then
+		local total; total="$(perguntas_ate "${max:-5}")"
+		echo "${B}$exame${X}  pergunta $pergunta/$total  nivel $nivel  ${B}$actual${X}  ($dir)"
+		echo "${B}$pontos${X} de $(maximo_de "$total") pontos   (passa-se aos $PASSAGEM)   esta vale $(vale "$pergunta")"
+		echo "resta $(tempo)   tentativas nesta pergunta: $tentativas"
+	else
+		echo "${B}$exame${X}  nivel $nivel  ${B}$actual${X}  ($dir)"
+	fi
 	echo "ja saiu: $feitos"
 }
 
@@ -472,16 +536,16 @@ ${B}Simulador dos exames da Piscine da 42${X}
   ${B}./exam start${X} [exam00|exam01|exam02|exam03] [--ate N]
         Comeca um exame. Sorteia um exercicio do nivel 0 e cria rendu/<nome>/.
         Por omissao: exam03, que e o exame final da Piscine.
-        Duracao: 4h (muda com EXAM_TIME=7200).
+        Duracao: 8h no exam03, 4h nos outros (muda com EXAM_TIME=7200).
         --ate N para no nivel N, para uma sessao mais curta. E escolha tua:
         o exame a serio nao tem tecto de nivel, acaba e quando o tempo acaba.
 
   ${B}./exam grade${X}
         Corrige o exercicio actual: compila com -Wall -Wextra -Werror, procura
         funcoes proibidas com nm e compara o output byte a byte. Se passar,
-        sorteia o nivel seguinte.
+        soma os pontos e sorteia a pergunta seguinte.
 
-  ${B}./exam status${X}       em que nivel vais e quanto tempo resta
+  ${B}./exam status${X}       em que pergunta vais, quantos pontos e quanto tempo resta
   ${B}./exam enunciado${X}    volta a mostrar o enunciado
   ${B}./exam solucao${X}      revela a solucao (so depois de teres tentado)
   ${B}./exam treino${X} <nome|0..5>
@@ -489,10 +553,13 @@ ${B}Simulador dos exames da Piscine da 42${X}
   ${B}./exam lista${X} [nivel]  todos os exercicios da pool
   ${B}./exam selftest${X}     corrige as 73 solucoes de referencia (deve dar 73/73)
 
-A Piscine tem quatro exames e o ultimo, o exam03, e o exame final. Os quatro
-usam a mesma pool de seis niveis e as mesmas regras -- o que muda e a altura
-da Piscine em que acontecem e quanto C ja sabes nessa altura, nao um tecto de
-nivel. Nao se salta niveis, tal como no exame a serio.
+A Piscine tem quatro exames e o ultimo, o exam03, e o exame final: dura oito
+horas, o dobro dos outros tres. Os quatro usam a mesma pool de seis niveis e
+as mesmas regras, e nao se salta niveis.
+
+Sao 16 perguntas: 2 no nivel 0, 3 nos niveis 1 a 4 e 2 no nivel 5. Cada uma
+vale 6 pontos ate aos 90; a ultima vale 10, o que fecha nos 100. Passa-se aos
+$PASSAGEM, ou seja com as cinco primeiras certas -- e ai que se decide tudo.
 EOF
 }
 

@@ -9,21 +9,24 @@
 <text x="22.0" y="56.0" fill="#5ad8e6" xml:space="preserve">$</text>
 <text x="29.2" y="56.0" fill="#c9d6e6" xml:space="preserve"> ./exam start exam03</text>
 <text x="22.0" y="73.4" fill="#c9d6e6" font-weight="700" xml:space="preserve">exam03 (o exame final)</text>
-<text x="180.8" y="73.4" fill="#c9d6e6" xml:space="preserve"> - niveis 0 a 5, 4h</text>
-<text x="22.0" y="90.8" fill="#5ad8e6" xml:space="preserve">nivel 0</text>
-<text x="72.5" y="90.8" fill="#c9d6e6" xml:space="preserve">  </text>
-<text x="87.0" y="90.8" fill="#c9d6e6" font-weight="700" xml:space="preserve">aff_z</text>
-<text x="123.1" y="90.8" fill="#c9d6e6" xml:space="preserve">   pasta: rendu/aff_z/</text>
-<text x="22.0" y="125.6" fill="#c9d6e6" xml:space="preserve">    Assignment name  : aff_z</text>
-<text x="22.0" y="143.0" fill="#c9d6e6" xml:space="preserve">    Expected files   : aff_z.c</text>
-<text x="22.0" y="160.4" fill="#c9d6e6" xml:space="preserve">    Allowed functions: write</text>
-<text x="22.0" y="177.8" fill="#c9d6e6" xml:space="preserve">    --------------------------------------------------------------------------------</text>
-<text x="22.0" y="195.2" fill="#c9d6e6" xml:space="preserve">    </text>
-<text x="22.0" y="212.6" fill="#c9d6e6" xml:space="preserve">    Write a program that takes a string, and displays the first &#x27;z&#x27;</text>
-<text x="22.0" y="230.0" fill="#c9d6e6" xml:space="preserve">    character it encounters in it, followed by a newline. If there are no</text>
-<text x="22.0" y="247.4" fill="#c9d6e6" xml:space="preserve">    &#x27;z&#x27; characters in the string, the program writes &#x27;z&#x27; followed</text>
-<text x="22.0" y="264.8" fill="#c9d6e6" xml:space="preserve">    by a newline. If the number of parameters is not 1, the program displays</text>
-<text x="22.0" y="282.2" fill="#c9d6e6" xml:space="preserve">    &#x27;z&#x27; followed by a newline.</text>
+<text x="180.8" y="73.4" fill="#c9d6e6" xml:space="preserve"> - niveis 0 a 5, 8h, 16 perguntas ate 100 pontos</text>
+<text x="22.0" y="90.8" fill="#5ad8e6" xml:space="preserve">passa-se aos 30</text>
+<text x="130.3" y="90.8" fill="#c9d6e6" xml:space="preserve">, ou seja com as cinco primeiras certas</text>
+<text x="22.0" y="108.2" fill="#5ad8e6" xml:space="preserve">pergunta 1/16</text>
+<text x="115.9" y="108.2" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="130.3" y="108.2" fill="#5ad8e6" xml:space="preserve">nivel 0</text>
+<text x="180.8" y="108.2" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="195.3" y="108.2" fill="#c9d6e6" font-weight="700" xml:space="preserve">aff_z</text>
+<text x="231.4" y="108.2" fill="#c9d6e6" xml:space="preserve">   pasta: rendu/aff_z/</text>
+<text x="22.0" y="143.0" fill="#c9d6e6" xml:space="preserve">    Assignment name  : aff_z</text>
+<text x="22.0" y="160.4" fill="#c9d6e6" xml:space="preserve">    Expected files   : aff_z.c</text>
+<text x="22.0" y="177.8" fill="#c9d6e6" xml:space="preserve">    Allowed functions: write</text>
+<text x="22.0" y="195.2" fill="#c9d6e6" xml:space="preserve">    --------------------------------------------------------------------------------</text>
+<text x="22.0" y="212.6" fill="#c9d6e6" xml:space="preserve">    </text>
+<text x="22.0" y="230.0" fill="#c9d6e6" xml:space="preserve">    Write a program that takes a string, and displays the first &#x27;z&#x27;</text>
+<text x="22.0" y="247.4" fill="#c9d6e6" xml:space="preserve">    character it encounters in it, followed by a newline. If there are no</text>
+<text x="22.0" y="264.8" fill="#c9d6e6" xml:space="preserve">    &#x27;z&#x27; characters in the string, the program writes &#x27;z&#x27; followed</text>
+<text x="22.0" y="282.2" fill="#c9d6e6" xml:space="preserve">    by a newline. If the number of parameters is not 1, the program displays</text>
 <text x="22.0" y="299.6" fill="#c9d6e6" xml:space="preserve">                    [ ... o resto do enunciado ... ]</text>
 <text x="22.0" y="317.0" fill="#c9d6e6" xml:space="preserve">Escreve o codigo e corre  </text>
 <text x="209.7" y="317.0" fill="#c9d6e6" font-weight="700" xml:space="preserve">./exam grade</text>
@@ -49,9 +52,9 @@
 <text x="101.4" y="508.4" fill="#c9d6e6" xml:space="preserve">  [ ... mais 3 casos ... ]</text>
 <text x="22.0" y="525.8" fill="#c9d6e6" xml:space="preserve">  </text>
 <text x="36.4" y="525.8" fill="#ff6b6b" xml:space="preserve">output   0/4</text>
-<text x="22.0" y="560.6" fill="#ff6b6b" xml:space="preserve">nivel 0 nao validado</text>
-<text x="166.4" y="560.6" fill="#c9d6e6" xml:space="preserve">   tentativa 1</text>
-<text x="22.0" y="578.0" fill="#c9d6e6" xml:space="preserve">resta 03:59:59</text>
+<text x="22.0" y="560.6" fill="#ff6b6b" xml:space="preserve">aff_z nao validado</text>
+<text x="152.0" y="560.6" fill="#c9d6e6" xml:space="preserve">   tentativa 1</text>
+<text x="22.0" y="578.0" fill="#c9d6e6" xml:space="preserve">0 pontos   resta 07:59:59</text>
 <text x="22.0" y="595.4" fill="#5ad8e6" xml:space="preserve">$</text>
 <text x="29.2" y="595.4" fill="#c9d6e6" xml:space="preserve"> ./exam grade</text>
 <text x="22.0" y="630.2" fill="#c9d6e6" font-weight="700" xml:space="preserve">aff_z</text>
@@ -64,10 +67,16 @@
 <text x="87.0" y="665.0" fill="#c9d6e6" xml:space="preserve">  nenhuma proibida</text>
 <text x="22.0" y="682.4" fill="#c9d6e6" xml:space="preserve">  </text>
 <text x="36.4" y="682.4" fill="#3ddc84" xml:space="preserve">output   4/4</text>
-<text x="22.0" y="717.2" fill="#3ddc84" xml:space="preserve">nivel 0 validado</text>
-<text x="137.5" y="717.2" fill="#c9d6e6" xml:space="preserve">  (tentativa 2)  resta 03:59:58</text>
-<text x="22.0" y="752.0" fill="#5ad8e6" xml:space="preserve">nivel 1</text>
-<text x="72.5" y="752.0" fill="#c9d6e6" xml:space="preserve">  </text>
-<text x="87.0" y="752.0" fill="#c9d6e6" font-weight="700" xml:space="preserve">ulstr</text>
-<text x="123.1" y="752.0" fill="#c9d6e6" xml:space="preserve">   pasta: rendu/ulstr/</text>
+<text x="22.0" y="717.2" fill="#3ddc84" xml:space="preserve">pergunta 1 validada</text>
+<text x="159.2" y="717.2" fill="#c9d6e6" xml:space="preserve">  (tentativa 2)  </text>
+<text x="281.9" y="717.2" fill="#c9d6e6" font-weight="700" xml:space="preserve">+6</text>
+<text x="296.4" y="717.2" fill="#c9d6e6" xml:space="preserve"> -&gt; </text>
+<text x="325.2" y="717.2" fill="#c9d6e6" font-weight="700" xml:space="preserve">6 pontos</text>
+<text x="383.0" y="717.2" fill="#c9d6e6" xml:space="preserve">   resta 07:59:58</text>
+<text x="22.0" y="752.0" fill="#5ad8e6" xml:space="preserve">pergunta 2/16</text>
+<text x="115.9" y="752.0" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="130.3" y="752.0" fill="#5ad8e6" xml:space="preserve">nivel 0</text>
+<text x="180.8" y="752.0" fill="#c9d6e6" xml:space="preserve">  </text>
+<text x="195.3" y="752.0" fill="#c9d6e6" font-weight="700" xml:space="preserve">ft_print_numbers</text>
+<text x="310.8" y="752.0" fill="#c9d6e6" xml:space="preserve">   pasta: rendu/ft_print_numbers/</text>
 </svg>

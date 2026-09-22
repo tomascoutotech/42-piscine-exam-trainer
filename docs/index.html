@@ -110,11 +110,15 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:18px 0;color:var
 
   <div id="v-como" class="hide">
     <h2>Como funciona o exame</h2>
-    <p>O exame sorteia <b>um exercicio de cada nivel</b>, a comecar no nivel 0. So passas ao
-    nivel seguinte depois de validar o anterior &mdash; nao se salta. Cada exame vai ate a um
-    A pool tem seis niveis, do 0 ao 5, e os quatro exames da Piscine usam a mesma. Nao
-    ha um tecto de nivel por exame: o que te trava e o relogio e o C que ja sabes. O
-    ultimo dos quatro, o <b>exam03</b>, e o exame final.</p>
+    <p>Sao <b>16 perguntas</b>: duas do nivel 0, tres de cada um dos niveis 1 a 4 e duas do
+    nivel 5. Comecas no 0 e so passas adiante depois de validar &mdash; nao se salta. A pool
+    tem seis niveis e os quatro exames da Piscine usam a mesma; nao ha tecto de nivel por
+    exame. O ultimo dos quatro, o <b>exam03</b>, e o exame final e dura <b>oito horas</b>,
+    o dobro dos outros tres.</p>
+    <p>Cada pergunta vale <b>6 pontos</b> ate aos 90, e a ultima vale <b>10</b>: sao 100 ao
+    todo. <b>Passa-se aos 30</b> &mdash; as cinco primeiras. E ai que se decide o exame: o
+    que vem depois ja e nota, e nos ultimos niveis esta materia que muita gente nao chega
+    a dar.</p>
     <p>A correccao nao corre a norminette. Corre tres coisas:</p>
     <pre>cc -Wall -Wextra -Werror   compila sem um unico aviso
 nm                         nenhuma funcao alem das permitidas
@@ -147,14 +151,37 @@ var PORNOME = {};
 POOL.forEach(function (e) { PORNOME[e.nome] = e; });
 
 // A Piscine tem quatro exames e o exam03 e o exame final. Os quatro usam a
-// mesma pool e as mesmas regras: nao ha tecto de nivel por exame.
+// mesma pool e as mesmas regras: nao ha tecto de nivel por exame. O que muda
+// e o relogio -- o final dura oito horas, o dobro dos outros tres.
 var EXAMES = [
-  { id: "exam00", max: 5, txt: "o primeiro" },
-  { id: "exam01", max: 5, txt: "o segundo" },
-  { id: "exam02", max: 5, txt: "o terceiro" },
-  { id: "exam03", max: 5, txt: "o ultimo &mdash; o exame final" }
+  { id: "exam00", max: 5, horas: 4, txt: "o primeiro &middot; 4h" },
+  { id: "exam01", max: 5, horas: 4, txt: "o segundo &middot; 4h" },
+  { id: "exam02", max: 5, horas: 4, txt: "o terceiro &middot; 4h" },
+  { id: "exam03", max: 5, horas: 8, txt: "o ultimo &mdash; o exame final &middot; 8h" }
 ];
-var DURACAO = 4 * 3600 * 1000;
+
+// Quantas perguntas saem por nivel. Sao 16: as primeiras 15 valem 6 pontos (90)
+// e a ultima vale 10, o que fecha nos 100. Passa-se aos 30, isto e, com as cinco
+// primeiras certas -- e por isso que o meio leva mais perguntas que as pontas.
+var PERGUNTAS = [2, 3, 3, 3, 3, 2];
+var TOTAL_PERGUNTAS = 16;
+var PONTOS_NORMAIS = 6;
+var PONTOS_ULTIMA = 10;
+var PASSAGEM = 30;
+
+function vale(n) { return n >= TOTAL_PERGUNTAS ? PONTOS_ULTIMA : PONTOS_NORMAIS; }
+
+function perguntasAte(max) {
+  var s = 0;
+  for (var i = 0; i <= max; i++) s += PERGUNTAS[i];
+  return s;
+}
+
+function maximoDe(n) {
+  return n >= TOTAL_PERGUNTAS
+    ? (TOTAL_PERGUNTAS - 1) * PONTOS_NORMAIS + PONTOS_ULTIMA
+    : n * PONTOS_NORMAIS;
+}
 
 /* ---------------------------------------------------------- realce de C */
 var TIPOS = ["void","int","char","unsigned","signed","long","short","float","double",
@@ -268,6 +295,14 @@ function ligaSolucao(botao, alvo) {
 var sessao = le("sessao");
 var tick = null;
 
+// uma sessao guardada antes de existirem pontos nao tem os campos novos
+if (sessao) {
+  if (sessao.duracao == null) sessao.duracao = 4 * 3600 * 1000;
+  if (sessao.pergunta == null) sessao.pergunta = 1;
+  if (sessao.noNivel == null) sessao.noNivel = 0;
+  if (sessao.pontos == null) sessao.pontos = 0;
+}
+
 function sorteia(nivel, fora) {
   var c = POOL.filter(function (e) { return e.nivel === nivel && fora.indexOf(e.nome) < 0; });
   if (!c.length) c = POOL.filter(function (e) { return e.nivel === nivel; });
@@ -277,7 +312,11 @@ function sorteia(nivel, fora) {
 function comeca(id) {
   var e = EXAMES.filter(function (x) { return x.id === id; })[0];
   var n = sorteia(0, []);
-  sessao = { exame: id, max: e.max, nivel: 0, actual: n, feitos: [n], inicio: Date.now() };
+  sessao = {
+    exame: id, max: e.max, duracao: e.horas * 3600 * 1000,
+    nivel: 0, noNivel: 0, pergunta: 1, pontos: 0,
+    actual: n, feitos: [n], inicio: Date.now()
+  };
   guarda("sessao", sessao);
   desenhaExame();
 }
@@ -288,10 +327,12 @@ function desenhaExame() {
 
   if (!sessao) {
     var h = "<h2>Escolhe o exame</h2><p>A Piscine tem quatro exames, e o ultimo, o "
-          + "<b>exam03</b>, e o exame final. Os quatro usam a mesma pool de seis "
-          + "niveis e as mesmas regras &mdash; o que muda e a altura da Piscine em "
-          + "que acontecem e quanto C ja sabes nessa altura. Sorteia um exercicio "
-          + "por nivel, a comecar no 0. Quatro horas.</p><div class=\"grid\">";
+          + "<b>exam03</b>, e o exame final &mdash; dura <b>oito horas</b>, o dobro "
+          + "dos outros tres. Os quatro usam a mesma pool de seis niveis e as mesmas "
+          + "regras: <b>16 perguntas</b>, duas no nivel 0, tres nos niveis 1 a 4 e "
+          + "duas no nivel 5. Cada uma vale <b>6 pontos</b> ate aos 90; a ultima vale "
+          + "<b>10</b>, o que fecha nos 100. <b>Passa-se aos " + PASSAGEM + "</b>, ou "
+          + "seja com as cinco primeiras certas.</p><div class=\"grid\">";
     EXAMES.forEach(function (e) {
       h += '<button class="card" data-e="' + e.id + '"><b>' + e.id + "</b><small>"
         + e.txt + "</small></button>";
@@ -306,9 +347,14 @@ function desenhaExame() {
   }
 
   var ex = PORNOME[sessao.actual];
+  var total = perguntasAte(sessao.max);
+  var esta = vale(sessao.pergunta);
   v.innerHTML =
       '<div class="bar"><div><b>' + sessao.exame + "</b> "
-    + '<span style="color:var(--mut2)">niveis 0 a ' + sessao.max + "</span></div>"
+    + '<span style="color:var(--mut2)">pergunta ' + sessao.pergunta + "/" + total
+    + " &middot; " + sessao.pontos + "/" + maximoDe(total) + " pontos"
+    + (sessao.pontos >= PASSAGEM ? " &middot; passaste" : " &middot; passa-se aos " + PASSAGEM)
+    + "</span></div>"
     + '<div class="timer" id="clk">--:--:--</div>'
     + '<button class="b" id="fim">Abandonar</button></div>'
     + '<div style="margin:22px 0 4px">' + chip(ex.nivel) + "</div>"
@@ -316,7 +362,7 @@ function desenhaExame() {
     + '<pre class="sub">' + esc(ex.enunciado) + "</pre>"
     + blocoCompilar(ex)
     + blocoTestes(ex)
-    + '<div class="btns"><button class="b go" id="ok">Validei &mdash; nivel seguinte</button>'
+    + '<div class="btns"><button class="b go" id="ok">Validei &mdash; vale ' + esta + " pontos</button>"
     + '<button class="b" id="outro">Sortear outro do nivel ' + ex.nivel + "</button>"
     + '<button class="b warn" id="sol">Ver a resolucao</button></div>'
     + blocoSolucao(ex, "sol-exame");
@@ -332,12 +378,17 @@ function desenhaExame() {
     guarda("sessao", sessao); desenhaExame();
   };
   document.getElementById("ok").onclick = function () {
-    if (sessao.nivel >= sessao.max) {
+    sessao.pontos += vale(sessao.pergunta);
+    sessao.pergunta++;
+    sessao.noNivel++;
+    if (sessao.noNivel >= PERGUNTAS[sessao.nivel]) { sessao.nivel++; sessao.noNivel = 0; }
+    if (sessao.pergunta > total || sessao.nivel > sessao.max) {
       var m = Math.round((Date.now() - sessao.inicio) / 60000);
-      alert("Acabaste o " + sessao.exame + " em " + m + " minutos.");
+      alert("Acabaste o " + sessao.exame + " em " + m + " minutos.\n"
+        + sessao.pontos + " de " + maximoDe(total) + " pontos."
+        + (sessao.pontos >= PASSAGEM ? "\nPassaste." : "\nFicaste abaixo dos " + PASSAGEM + "."));
       sessao = null; guarda("sessao", null); desenhaExame(); return;
     }
-    sessao.nivel++;
     sessao.actual = sorteia(sessao.nivel, sessao.feitos);
     sessao.feitos.push(sessao.actual);
     guarda("sessao", sessao); desenhaExame();
@@ -346,7 +397,7 @@ function desenhaExame() {
 
   var clk = document.getElementById("clk");
   function relogio() {
-    var s = Math.floor((sessao.inicio + DURACAO - Date.now()) / 1000);
+    var s = Math.floor((sessao.inicio + sessao.duracao - Date.now()) / 1000);
     if (s <= 0) { clk.textContent = "00:00:00"; clk.classList.add("low"); return; }
     if (s < 900) clk.classList.add("low");
     var p = function (n) { return (n < 10 ? "0" : "") + n; };

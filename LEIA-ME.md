@@ -1,13 +1,13 @@
 # Simulador dos exames da Piscine
 
-Isto é um exame a sério, sem ser o exame. Sorteia um exercício de cada nível a
-começar no 0, dá-te quatro horas, e corrige como a Moulinette corrige: compila com
-`cc -Wall -Wextra -Werror`, procura funções proibidas com `nm`, e compara o output
-byte a byte.
+Isto é um exame a sério, sem ser o exame. Sorteia 16 perguntas a começar no nível 0,
+conta os pontos, dá-te oito horas no exame final, e corrige como a Moulinette corrige:
+compila com `cc -Wall -Wextra -Werror`, procura funções proibidas com `nm`, e compara
+o output byte a byte.
 
 **Versão web, sem instalar nada:** https://tomascoutotech.github.io/42-piscine-exam-trainer/
 
-<img src="docs/exam-cli.svg" alt="Uma sessão real do ./exam: nível 0 sorteado, uma correcção falhada com o diff, e depois a que passa" width="650">
+<img src="docs/exam-cli.svg" alt="Uma sessão real do ./exam: pergunta 1 de 16 sorteada, uma correcção falhada com o diff, e depois a que passa e vale 6 pontos" width="650">
 
 ---
 
@@ -29,8 +29,8 @@ enunciado lá dentro e arranca o cronómetro. Escreves o código nessa pasta e c
 ./exam grade
 ```
 
-Se passar, sobe de nível e sorteia o seguinte. Se não passar, diz-te exactamente
-onde falhou e ficas no mesmo nível — como no exame.
+Se passar, soma os pontos e sorteia a pergunta seguinte. Se não passar, diz-te
+exactamente onde falhou e ficas na mesma pergunta — como no exame.
 
 ### Os comandos todos
 
@@ -38,7 +38,7 @@ onde falhou e ficas no mesmo nível — como no exame.
 |---|---|
 | `./exam start [exame] [--ate N]` | começa. `exam00` `exam01` `exam02` `exam03` (por omissão) |
 | `./exam grade` | corrige o exercício actual |
-| `./exam status` | em que nível vais e quanto tempo resta |
+| `./exam status` | em que pergunta vais, quantos pontos levas e quanto tempo resta |
 | `./exam enunciado` | volta a mostrar o enunciado |
 | `./exam solucao` | revela a resolução, só depois de teres tentado corrigir |
 | `./exam treino <nome\|0..5>` | um exercício a solo, sem cronómetro, em `treino/` |
@@ -46,16 +46,32 @@ onde falhou e ficas no mesmo nível — como no exame.
 | `./exam selftest` | corrige as 73 soluções de referência. Tem de dar 73/73 |
 
 A Piscine tem **quatro exames**, e o último, o `exam03`, é o exame final — e é o que
-sai por omissão, portanto um `./exam start` seco dá-te esse.
+sai por omissão, portanto um `./exam start` seco dá-te esse. Dura **oito horas**, o
+dobro dos outros três.
 
 Os quatro sorteiam da **mesma pool de seis níveis** e seguem as mesmas regras. O que
 muda entre eles é a altura da Piscine em que acontecem e quanto C já sabes nessa
-altura, **não um tecto de nível**. Não encontrei fonte nenhuma para um tecto por
-exame, por isso isto não inventa um.
+altura, **não um tecto de nível**.
 
-Quatro horas por omissão; para duas, `EXAM_TIME=7200 ./exam start`. Para uma sessão
-curta, `./exam start --ate 2` pára no nível 2 — isso é escolha tua, o exame a sério
-acaba é quando o tempo acaba.
+### Dezasseis perguntas, cem pontos
+
+Duas do nível 0, três de cada um dos níveis 1 a 4, e duas do nível 5. Cada uma vale
+**6 pontos** até aos 90; a última vale **10**, o que fecha nos 100.
+
+**Passa-se aos 30** — as cinco primeiras. É aí que o exame se decide, e é por isso
+que o meio leva mais perguntas do que as pontas: nos últimos níveis está matéria a
+que muita gente nem chega, portanto é nota, não é sobrevivência.
+
+```
+./exam status
+exam03  pergunta 4/16  nivel 1  ft_strrev  (rendu/ft_strrev)
+18 de 100 pontos   (passa-se aos 30)   esta vale 6
+resta 07:31:02   tentativas nesta pergunta: 1
+```
+
+Para mudar o relógio, `EXAM_TIME=7200 ./exam start`. Para uma sessão curta,
+`./exam start --ate 2` pára no nível 2 — isso é escolha tua, o exame a sério acaba é
+quando o tempo acaba.
 
 ## O que a correcção verifica
 
@@ -153,7 +169,7 @@ justificar a regra.
 — sorteia com cronómetro, lista os 73 com pesquisa, e mostra o enunciado, os testes e
 a resolução. Não compila nada: o browser não corre C.
 
-<img src="docs/site.png" alt="O simulador web com um exercício sorteado, o enunciado e os casos de teste" width="820">
+<img src="docs/site.png" alt="O simulador web na pergunta 4 de 16 com 18 de 100 pontos, a mostrar o exercício sorteado e o enunciado" width="820">
 
 ## O documento
 
