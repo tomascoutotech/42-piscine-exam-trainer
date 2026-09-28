@@ -1,5 +1,10 @@
 # Simulador dos exames da Piscine
 
+[![testes](https://github.com/tomascoutotech/42-piscine-exam-trainer/actions/workflows/testes.yml/badge.svg)](https://github.com/tomascoutotech/42-piscine-exam-trainer/actions/workflows/testes.yml)
+[![license](https://img.shields.io/github/license/tomascoutotech/42-piscine-exam-trainer)](LICENSE)
+
+Não afiliado, endossado ou operado pela 42 / École 42.
+
 Isto é um exame a sério, sem ser o exame. Sorteia 16 perguntas a começar no nível 0,
 conta os pontos, dá-te oito horas no exame final, e corrige como a Moulinette corrige:
 compila com `cc -Wall -Wextra -Werror`, procura funções proibidas com `nm`, e compara

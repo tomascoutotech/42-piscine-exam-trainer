@@ -1,5 +1,10 @@
 # 42 Piscine Exam Trainer
 
+[![testes](https://github.com/tomascoutotech/42-piscine-exam-trainer/actions/workflows/testes.yml/badge.svg)](https://github.com/tomascoutotech/42-piscine-exam-trainer/actions/workflows/testes.yml)
+[![license](https://img.shields.io/github/license/tomascoutotech/42-piscine-exam-trainer)](LICENSE)
+
+Not affiliated with, endorsed by, or operated by 42 / École 42.
+
 A working simulator for the four 42 Piscine exams — exam00, exam01, exam02, and
 exam03, which is the final exam — plus the full exercise pool, tested reference
 solutions, and a 111-page study document.
